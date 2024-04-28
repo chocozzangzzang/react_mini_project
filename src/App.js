@@ -1,30 +1,27 @@
-import styled from 'styled-components';
 import './App.css';
-import ArticleList from './article/ArticleList';
-import data from "./data.json";
+// import data from "./data.json";
+import styled from "styled-components";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import MainPage from './Page/MainPage';
+import WritePage from './Page/WritePage';
 
-const AllContainer = styled.div`
-  padding : 16px;
-  display : flex;
-  flex-direction : column;
-  align-items : center;
-  justify-content : center;
-
-  & > * {
-    :not(:last-child) {
-        margin-bottom : 24px;
-    }
-  }
+const MainTitleText = styled.p`
+  font-size : 24px;
+  font-weight : bold;
+  text-align : center;
 `;
 
-function App() {
+function App() { 
   return (
-    <AllContainer>
-      <ArticleList
-       posts={data}
-      />
-    </AllContainer>
-    
+    <BrowserRouter>
+      <MainTitleText>==DB 연결 프로젝트==</MainTitleText>
+      <Routes>
+          <Route index element={<MainPage />}></Route>
+          <Route path="/article" element={<MainPage />}></Route>
+          <Route path="/article/write" element={<WritePage />}></Route>
+      </Routes>
+    </BrowserRouter>
+      
   );
 }
 

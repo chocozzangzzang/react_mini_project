@@ -2,23 +2,23 @@ import React from 'react'
 import ArticleListItem from './ArticleListItem';
 import styled from 'styled-components';
 
+const ArticleContainer = styled.div`
+    padding : 16px;
+    width : 100%;
+    display : flex;
+    flex-direction : column;
+`;
+
 function ArticleList(props) {
 
-    const {posts} = props;
-
-    const ArticleContainer = styled.div`
-        padding : 16px;
-        width : (100% - 32px);
-        display : flex;
-        flex-direction : column;
-    `;
+    const {articles} = props;
 
     return (
         <ArticleContainer>
-            {posts.map((post) => (
+            {articles.map((article) => (
                 <ArticleListItem
-                    key={post.id}
-                    article={post}
+                    key={article.id}
+                    article={article}
                 />
             ))}
         </ArticleContainer>
