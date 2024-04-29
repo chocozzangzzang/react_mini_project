@@ -3,6 +3,7 @@ import Button from '../ui/Button';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import TextInput from '../ui/TextInput';
+import axios from 'axios';
 
 const HomePage = styled.div`
         padding : 16px;
@@ -28,21 +29,73 @@ function WritePage() {
     
     const navigate = useNavigate();
 
+    async function postArticle() {
+        /*
+        const data = {
+            title : title,
+            content : content,
+        };
+
+        const config = {
+            "Content-Type" : "application/json",
+        };*/
+        
+        
+        try {
+            await axios.post("http://localhost:3001/article", {title, content})
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+        } catch(e) {
+            console.log(e.message);
+        }
+
+        /*
+        try {
+            const response = await fetch("http://localhost:3001/article", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+      
+            if (response.ok) {
+                alert("데이터가 성공적으로 전송되었습니다.");
+                // 성공적으로 데이터를 보냈다면, 필요한 후속 조치를 여기에 추가할 수 있습니다.
+                setTitle("");
+                setContent("");
+            } else {
+              alert("데이터 전송에 실패했습니다.");
+            }
+          } catch (error) {
+            alert("라우터 접근에 문제가 있습니다.");
+          }
+        */
+    }
+
+    const articleSubmit = (event) => {
+        // alert(`${title} :: ${content}`)
+        postArticle();
+        navigate("/article");
+        event.preventDefault();
+    }
+
     return (
     <HomePage>
-        <Button
-            buttonTitle="작성 완료"
-            onClick={() => {
-                if(title !== "" && content !== "") navigate("/article");
-                else alert("제목이나 내용을 입력하시오!!");
-            }}
-        />
-        <AllContainer>
-            <Label>제목</Label>
-            <TextInput height={20} value={title} onChange={(event) => {setTitle(event.target.value)}}/>
-            <Label>내용</Label>        
-            <TextInput height={240} value={content} onChange={(event) => {setContent(event.target.value)}}></TextInput>
-        </AllContainer>
+        <form onSubmit={articleSubmit}>
+            <Button
+                buttonTitle="작성 완료"
+                onClick={() => {
+                    if(title === "" && content === "") alert("제목이나 내용을 입력하시오!!");
+                }}
+            />
+            <AllContainer>
+                <Label>제목</Label>
+                <TextInput height={20} value={title} onChange={(event) => {setTitle(event.target.value)}}/>
+                <Label>내용</Label>        
+                <TextInput height={240} value={content} onChange={(event) => {setContent(event.target.value)}}></TextInput>
+            </AllContainer>
+        </form>
     </HomePage>
     
   )

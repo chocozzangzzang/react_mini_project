@@ -2,6 +2,7 @@ const express = require("express"); // npm i express | yarn add express
 const cors    = require("cors");    // npm i cors | yarn add cors
 const mysql   = require("mysql");   // npm i mysql | yarn add mysql
 const app     = express();
+const bodyParser = require("body-parser");
 const PORT    = 3001; // 포트번호 설정
 
 // MySQL 연결
@@ -19,7 +20,10 @@ app.use(cors({
 }))
 
 // post 요청 시 값을 객체로 바꿔줌
-app.use(express.urlencoded({ extended: true })) 
+app.use(express.urlencoded({ extended: true }))
+
+// JSON Parsing
+app.use(bodyParser.json());
 
 // 서버 연결 시 발생
 app.listen(PORT, () => {
@@ -36,6 +40,19 @@ app.get("/article", (req, res) => {
         if(err) res.send(err);
         else res.send(result);
     });
+});
+
+app.post("/article", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const {title, content} = req.body;
+
+    const sqlQuery = `INSERT INTO ARTICLE(title, content) VALUES ("${title}", "${content}")`;
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else res.send(result);
+    })
 });
 
 module.exports = app;

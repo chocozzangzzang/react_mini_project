@@ -35,7 +35,7 @@ function MainPage() {
 
     useEffect(() => {
         fetchArticle();
-    }, []);
+    }, [article]);
 
     const navigate = useNavigate();
 
