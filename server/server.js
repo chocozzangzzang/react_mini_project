@@ -55,4 +55,106 @@ app.post("/article", (req, res) => {
     })
 });
 
+app.delete("/article", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const {articleId} = req.query;
+    
+    const sqlQuery = `DELETE FROM ARTICLE AS AT WHERE AT.ID = ${articleId}`;
+    const sqlQuery2 = `DELETE FROM COMMENT AS CT WHERE CT.ARTICLEID = ${articleId}`;
+
+    db.query(sqlQuery + sqlQuery2, (err, result) => {
+        if(err) res.send(err);
+        else res.send(articleId);
+    });
+});
+
+app.put("/article", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const {articleId, title, content} = req.body;
+
+    // console.log(articleId);
+    // console.log(title);
+    // console.log(content);
+
+    const sqlQuery = `UPDATE ARTICLE SET TITLE = '${title}', CONTENT = '${content}' WHERE ID = ${articleId}`;
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else res.send(result);
+    });
+})
+
+app.get("/article/:id", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const articleId = req.params.id;
+
+    const sqlQuery = `SELECT * FROM ARTICLE AS AT WHERE AT.ID = ${articleId}`;
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else res.send(result);
+    });
+});
+
+app.get("/comment/:id", (req, res) => {
+
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const articleId = req.params.id;
+
+    const sqlQuery = `SELECT * FROM COMMENT AS CT WHERE CT.ARTICLEID = ${articleId}`;
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else res.send(result);
+    });
+
+});
+
+app.post("/comment", (req, res) => {
+    
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const {articleId, comment} = req.body;
+
+    const sqlQuery = `INSERT INTO COMMENT(articleid, comment) VALUES(${articleId}, "${comment}")`;
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else res.send(result);
+    });
+});
+
+app.delete("/comment", (req, res) => {
+
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const {commentId} = req.query;
+
+    const sqlQuery = `DELETE FROM COMMENT AS CT WHERE CT.ID = ${commentId}`;
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else res.send(result);
+    });
+});
+
+app.put("/comment", (req, res) => {
+
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const {id, articleid, comment} = req.body.comment;
+
+    const sqlQuery = `UPDATE COMMENT SET ARTICLEID = ${articleid}, COMMENT = "${comment}" WHERE ID = ${id}`;
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else res.send(result);
+    })
+
+})
+
 module.exports = app;

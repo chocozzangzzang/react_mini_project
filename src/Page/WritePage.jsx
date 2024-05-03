@@ -6,8 +6,8 @@ import TextInput from '../ui/TextInput';
 import axios from 'axios';
 
 const HomePage = styled.div`
-        padding : 16px;
-    `;
+    padding : 32px;
+`;
 
 const AllContainer = styled.div`
     display : flex;
@@ -85,8 +85,13 @@ function WritePage() {
         <form onSubmit={articleSubmit}>
             <Button
                 buttonTitle="작성 완료"
-                onClick={() => {
-                    if(title === "" && content === "") alert("제목이나 내용을 입력하시오!!");
+                onClick={(event) => {
+                    if(title === "" || content === "") {
+                        alert("제목이나 내용을 입력하시오!!");
+                        event.preventDefault();
+                    } else {
+                        alert("게시물을 작성하였습니다!!");
+                    }
                 }}
             />
             <AllContainer>

@@ -10,10 +10,11 @@ const ContentWrapper = styled.textarea`
         border-radius : 16px;
         max-width : 1440px;
         width : calc(100% - 32px);
-        padding : 24px;
+        padding : 16px;
         font-size : 16px;
         resize : none;
         line-height : 20px;
+        margin-bottom : 8px;
 
         ${(props) =>
             props.height &&
