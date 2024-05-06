@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components';
 
-const ContentWrapper = styled.textarea`
+const ContentWrapper = styled.input`
         display : flex;
         flex-direction : column;
         align-items : flex-start;
@@ -22,7 +22,7 @@ const ContentWrapper = styled.textarea`
         }
     `;
 
-function TextInput(props) {
+function PwInput(props) {
     
     const {type, height, value, onChange} = props;
     
@@ -31,4 +31,4 @@ function TextInput(props) {
     )
 }
 
-export default TextInput;
+export default PwInput;

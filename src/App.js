@@ -6,26 +6,27 @@ import MainPage from './Page/MainPage';
 import WritePage from './Page/WritePage';
 import ModifyPage from './Page/ModifyPage';
 import ArticleDetail from './article/ArticleDetail';
+import Toolbar from './ui/Toolbar';
+import RegisterPage from './Page/RegisterPage';
 
-const MainTitleText = styled.p`
-  font-size : 24px;
-  font-weight : bold;
-  text-align : center;
-`;
+// const MainTitleText = styled.p`
+//   font-size : 24px;
+//   font-weight : bold;
+//   text-align : center;
+// `;
 
 function App() {
 
   return (
     <BrowserRouter>
-      <Link to="/">
-        <MainTitleText>==DB 연결 프로젝트==</MainTitleText>
-      </Link>    
+      <Toolbar></Toolbar>
       <Routes>
           <Route index element={<MainPage />}></Route>
           <Route path="/article" element={<MainPage />}></Route>
           <Route path="/article/:articleId" element={<ArticleDetail />}></Route>
           <Route path="/article/write" element={<WritePage />}></Route>
           <Route path="/article/modify/:articleId" element={<ModifyPage />}></Route>
+          <Route path="/member/register" element={<RegisterPage />}></Route>
       </Routes>
     </BrowserRouter>
       

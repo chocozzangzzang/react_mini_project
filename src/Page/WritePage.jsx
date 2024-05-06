@@ -96,9 +96,9 @@ function WritePage() {
             />
             <AllContainer>
                 <Label>제목</Label>
-                <TextInput height={20} value={title} onChange={(event) => {setTitle(event.target.value)}}/>
+                <TextInput type="text" height={20} value={title} onChange={(event) => {setTitle(event.target.value)}}/>
                 <Label>내용</Label>        
-                <TextInput height={240} value={content} onChange={(event) => {setContent(event.target.value)}}></TextInput>
+                <TextInput type="text" height={240} value={content} onChange={(event) => {setContent(event.target.value)}}></TextInput>
             </AllContainer>
         </form>
     </HomePage>

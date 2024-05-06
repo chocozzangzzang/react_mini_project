@@ -4,12 +4,15 @@ const blue = "#228be6"; // 주석 선언
 
 const GeneralButton = styled.button`
     display: inline-flex;
+    margin : 0 auto;
     color: white;
     font-weight: bold;
     outline: none;
     border-radius: 4px;
     border: none;
     cursor: pointer;
+
+    text-align: center;
 
     height: 2.25rem;
     padding-left: 1rem;
