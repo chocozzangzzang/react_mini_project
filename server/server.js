@@ -153,6 +153,40 @@ app.put("/comment", (req, res) => {
     db.query(sqlQuery, (err, result) => {
         if(err) res.send(err);
         else res.send(result);
+    });
+});
+
+app.post("/member/register", (req, res) => {
+
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const {id, settingPW, email} = req.body;
+
+    const sqlQuery = `INSERT INTO MEMBER(email, memberid, memberpw) VALUES("${email}", "${id}", "${settingPW}")`;
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else res.send(result);
+    });
+});
+
+app.post("/member/login", (req, res) => {
+
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const {email} = req.body;
+
+    const sqlQuery = `SELECT * FROM MEMBER AS MT WHERE MT.EMAIL = "${email}"`
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else {
+            if(result.length == 1) {
+                res.send(result[0]);
+            } else {
+                res.send("NOT FOUND");
+            }
+        }
     })
 
 })

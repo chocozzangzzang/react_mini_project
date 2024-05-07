@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from "styled-components";
 
@@ -11,12 +11,25 @@ const CustomToolbar = styled.div`
     max-width : 1440px;
 `;
 
-const LoginButton = styled.button`
+const ButtonDiv = styled.div`
     margin-left : auto;
+`;
+
+const LoginButton = styled.button`
 `;
 
 const RegisterButton = styled.button`
 
+`;
+
+const LogoutButton = styled.button`
+    margin-left : auto;
+`;
+
+const NowSpan = styled.span`
+    font-size : 16px;
+    font-weight : bold;
+    color : #6495ed;
 `;
 
 
@@ -29,13 +42,43 @@ const CustomA = styled.a`
 
 function Toolbar() {
 
-    const navigate = useNavigate();
+    const [nowLoggedIn, setNowLoggedIn] = useState(false);
+    const [nowId, setNowId] = useState("");
+
+    const navigate = useNavigate();    
+
+    useEffect(() => {
+        const loginNowId = sessionStorage.getItem("memberid");
+        if(loginNowId !== null) {
+            setNowLoggedIn(true);
+            setNowId(loginNowId);
+        } 
+    });
+
+    const logout = () => {
+        sessionStorage.clear();
+        setNowLoggedIn(false);
+    }
 
     return (
         <CustomToolbar>
             <CustomA href="/">==DB 연결==</CustomA>
-            <LoginButton>로그인</LoginButton>
-            <RegisterButton onClick={() => navigate("/member/register")}>회원가입</RegisterButton>
+            {
+                nowLoggedIn ? (
+                    <ButtonDiv>
+                        <NowSpan>{nowId} 님 환영합니다!!  </NowSpan>
+                        <LogoutButton onClick={() => logout()}>로그아웃</LogoutButton>
+                    </ButtonDiv>
+                    
+                ) : (
+                    <ButtonDiv>
+                        <LoginButton onClick={() => navigate("/member/login")}>로그인</LoginButton>
+                        <RegisterButton onClick={() => navigate("/member/register")}>회원가입</RegisterButton>
+                    </ButtonDiv>
+                    
+                )
+            }
+            
         </CustomToolbar>
     )
 }

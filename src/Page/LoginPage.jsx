@@ -39,16 +39,12 @@ const GeneralSpan = styled.span`
     font-weight : bold;
 `;
 
-
 const secretKey = "cocozzang";
 
-function RegisterPage() {
+function LoginPage() {
 
     const [email, setEmail] = useState("");
-    const [id, setId] = useState("");
     const [pw, setPw] = useState("");
-    const [pwConfirm, setPwConfirm] = useState("");
-    const [isPwSame, setIsPwSame] = useState(false);
     const [isPwValid, setIsPwValid] = useState(false);
     const [isEmailValid, setIsEmailValid] = useState(false);
 
@@ -56,11 +52,6 @@ function RegisterPage() {
     const EMAIL_REGEX = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if(pw === pwConfirm && pw !== "" && isPwValid) setIsPwSame(true);
-        else setIsPwSame(false);
-    }, [pw, pwConfirm, isPwValid]);
 
     useEffect(() => {
         const result = PWD_REGEX.test(pw);
@@ -74,17 +65,27 @@ function RegisterPage() {
         else setIsEmailValid(false);
     }, [email]);
 
-    async function register() {
-
-        const data = {pw : pw};
-        const cryptoPW = CryptoJS.AES.encrypt(JSON.stringify(data), secretKey);
-        const settingPW = cryptoPW.toString();
-
-        console.log(settingPW);
+    async function login() {
 
         try {
-            await axios.post("http://localhost:3001/member/register", {id, settingPW, email})
-            .then(response => {console.log(response); alert("회원가입 되었습니다");})
+            await axios.post("http://localhost:3001/member/login", {email})
+            .then(response => {
+                if(response.data === "NOT FOUND") {
+                    alert("없는 회원입니다.");
+                } else {
+                    const dbPW = response.data.memberpw;
+                    const decryptPW = CryptoJS.AES.decrypt(dbPW, secretKey);
+                    const settingPW = JSON.parse(decryptPW.toString(CryptoJS.enc.Utf8)).pw;
+                    if(settingPW === pw) {
+                        clearAll();
+                        alert("로그인 하였습니다.");
+                        sessionStorage.setItem("email", response.data.email);
+                        sessionStorage.setItem("memberid", response.data.memberid);
+                        navigate("/");
+                    }
+                    else alert("비밀번호가 다릅니다.");
+                }
+            })
             .catch(error => console.log(error));
         } catch(e) {
             console.log(e.message);
@@ -92,24 +93,20 @@ function RegisterPage() {
     }
 
     function clearAll() {
-        setId("");
         setEmail("");
         setPw("");
-        setPwConfirm("");
-        setIsPwSame(false);
         setIsEmailValid(false);
         setIsPwValid(false);
     }
 
-    const memberRegister = (event) => {
+    const memberLogin = (event) => {
 
-        if(isEmailValid && isPwValid && isPwSame && id !== "") {
-            register();
-            clearAll();
-            navigate("/");
+        if(email !== "" && pw !== "" && isEmailValid && isPwValid) {
+            login();
             event.preventDefault();
         } else {
-            alert("입력하지 않은 칸이 있습니다!!");
+            if (email === "" || pw === "") alert("입력하지 않은 칸이 있는지 확인하십시오.");
+            else if(!isEmailValid || !isPwValid) alert("입력 정보를 다시 확인하십시오.");
             event.preventDefault();
         }
 
@@ -118,25 +115,17 @@ function RegisterPage() {
 
     return (
         <RegiPage>
-            <form onSubmit={memberRegister}>
+            <form onSubmit={memberLogin}>
                 <InputBoxes>
                     <Label>Email</Label>
                     <TextInput type="text" height={20} value={email} onChange={(event) => {setEmail(event.target.value)}}></TextInput>
-                    {isEmailValid? (<GeneralSpan>유효한 이메일입니다!!</GeneralSpan>) : (<WarnSpan>이메일 형식을 지켜주세요!!</WarnSpan>)}
-                    <Label>ID</Label>
-                    <TextInput type="text" height={20} value={id} onChange={(event) => {setId(event.target.value)}}></TextInput>
                     <Label>PW</Label> 
                     <PwInput type="password" height={20} value={pw} onChange={(event) => {setPw(event.target.value)}}></PwInput>
-                    {isPwValid ? (<GeneralSpan>유효한 비밀번호입니다!!</GeneralSpan>) : (<WarnSpan>비밀번호는 8~24자, 소문자, 숫자, 특수문자(#?!@$%^&*)를 포함해야합니다!!</WarnSpan>)}
-                    <Label>PW Confirm</Label> 
-                    <PwInput type="password" height={20} value={pwConfirm} onChange={(event) => {setPwConfirm(event.target.value)}}></PwInput>
-                    {isPwSame ? (<GeneralSpan>password is same!!</GeneralSpan>) : (<WarnSpan>check your password</WarnSpan>)}
-                    <br/>
-                    <Button buttonTitle="회원가입" onClick={null}></Button>
+                    <Button buttonTitle="로그인" onClick={null}></Button>
                 </InputBoxes>
             </form>          
         </RegiPage>
     )
 }
 
-export default RegisterPage;
+export default LoginPage;

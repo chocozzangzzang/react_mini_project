@@ -8,6 +8,7 @@ import ModifyPage from './Page/ModifyPage';
 import ArticleDetail from './article/ArticleDetail';
 import Toolbar from './ui/Toolbar';
 import RegisterPage from './Page/RegisterPage';
+import LoginPage from './Page/LoginPage';
 
 // const MainTitleText = styled.p`
 //   font-size : 24px;
@@ -27,6 +28,7 @@ function App() {
           <Route path="/article/write" element={<WritePage />}></Route>
           <Route path="/article/modify/:articleId" element={<ModifyPage />}></Route>
           <Route path="/member/register" element={<RegisterPage />}></Route>
+          <Route path="/member/login" element={<LoginPage />}></Route>
       </Routes>
     </BrowserRouter>
       
