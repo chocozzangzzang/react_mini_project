@@ -1,7 +1,5 @@
 import React from 'react'
 import styled from "styled-components";
-import DeleteButton from '../ui/DeleteButton';
-import ModifyButton from '../ui/ModifyButton';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -17,13 +15,8 @@ const Wrapper = styled.div`
 `;
 
 const ArticleTitle = styled.p`
-    font-size : 32px;
-    font-weight : bold;
-`;
-
-const ArticleContent = styled.p`
     font-size : 24px;
-    padding-right : 8px;
+    font-weight : bold;
 `;
 
 const ContentWrapper = styled.div`
@@ -31,6 +24,11 @@ const ContentWrapper = styled.div`
     flex-direction : row;
     align-items : baseline;
     justify-content : center;
+`;
+
+const ArticleWriter = styled.p`
+    font-size : 24px;
+    font-weight : bold;
 `;
 
 function ArticleListItem(props) {
@@ -45,13 +43,9 @@ function ArticleListItem(props) {
                     navigate(`/article/${article.id}`);
                 }}
             >
-                #{article.id}.. {article.title}
+                제목 : {article.title}
             </ArticleTitle>
-            <ContentWrapper>
-                <ArticleContent>{article.content}</ArticleContent>
-                <DeleteButton articleId={article.id}/>
-                <ModifyButton articleId={article.id}/>
-            </ContentWrapper>
+            <ArticleWriter>작성자 : {article.writer}</ArticleWriter>
         </Wrapper>
     )
 }

@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import CommentList from '../comment/CommentList';
 import TextInput from '../ui/TextInput';
 import Button from '../ui/Button';
+import DeleteButton from '../ui/DeleteButton';
+import ModifyButton from '../ui/ModifyButton';
 
 const DetailContainer = styled.div`
     display : flex;
@@ -26,8 +28,13 @@ const WrapperA = styled.div`
     margin-bottom : 16px;
 `;
 
+const ArticleWriter = styled.p`
+  font-size : 32px;
+  font-weight : bold;
+`;
+
 const ArticleTitle = styled.p`
-    font-size : 32px;
+    font-size : 24px;
     font-weight : bold;
 `;
 
@@ -56,6 +63,8 @@ function ArticleDetail() {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
 
+  const [writer, setWriter] = useState("");
+
   const {articleId} = useParams();
 
   async function getArticle() {
@@ -64,6 +73,7 @@ function ArticleDetail() {
             .then(response => {
                 setTitle((response.data)[0].title);
                 setContent((response.data)[0].content);
+                setWriter((response.data)[0].writer);
             })
             .catch(error => console.log(error));
     } catch (e) {
@@ -109,11 +119,14 @@ function ArticleDetail() {
   return (
     <DetailContainer>
       <WrapperA>
+        <ArticleWriter>작성자 : {writer}</ArticleWriter>
         <ArticleTitle>
           #{articleId}.. {title}
         </ArticleTitle>
         <ContentWrapper>
           <ArticleContent>{content}</ArticleContent>
+          <DeleteButton articleId={articleId} writer={writer}/>
+          <ModifyButton articleId={articleId} writer={writer}/>
         </ContentWrapper>
       </WrapperA>
       <CommentList comments={comments}></CommentList>

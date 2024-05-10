@@ -42,7 +42,9 @@ function WritePage() {
         
         
         try {
-            await axios.post("http://localhost:3001/article", {title, content})
+            const loginNowId = sessionStorage.getItem("memberid");
+
+            await axios.post("http://localhost:3001/article", {title, content, loginNowId})
             .then(response => console.log(response))
             .catch(error => console.log(error));
         } catch(e) {

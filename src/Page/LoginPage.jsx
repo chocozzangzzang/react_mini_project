@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import TextInput from '../ui/TextInput';
 import Button from '../ui/Button';
 import PwInput from '../ui/PwInput';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
@@ -52,6 +52,7 @@ function LoginPage() {
     const EMAIL_REGEX = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const result = PWD_REGEX.test(pw);
@@ -67,6 +68,8 @@ function LoginPage() {
 
     async function login() {
 
+        const prevUrl = location.state;
+
         try {
             await axios.post("http://localhost:3001/member/login", {email})
             .then(response => {
@@ -81,7 +84,7 @@ function LoginPage() {
                         alert("로그인 하였습니다.");
                         sessionStorage.setItem("email", response.data.email);
                         sessionStorage.setItem("memberid", response.data.memberid);
-                        navigate("/");
+                        navigate(prevUrl);
                     }
                     else alert("비밀번호가 다릅니다.");
                 }

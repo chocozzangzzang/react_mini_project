@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from "styled-components";
 
 const CustomToolbar = styled.div`
@@ -45,7 +45,8 @@ function Toolbar() {
     const [nowLoggedIn, setNowLoggedIn] = useState(false);
     const [nowId, setNowId] = useState("");
 
-    const navigate = useNavigate();    
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const loginNowId = sessionStorage.getItem("memberid");
@@ -62,7 +63,7 @@ function Toolbar() {
 
     return (
         <CustomToolbar>
-            <CustomA href="/">==DB 연결==</CustomA>
+            <CustomA href="/">DB 연결</CustomA>
             {
                 nowLoggedIn ? (
                     <ButtonDiv>
@@ -72,7 +73,9 @@ function Toolbar() {
                     
                 ) : (
                     <ButtonDiv>
-                        <LoginButton onClick={() => navigate("/member/login")}>로그인</LoginButton>
+                        <LoginButton onClick={() => {
+                            navigate("/member/login", {state : location.pathname});
+                        }}>로그인</LoginButton>
                         <RegisterButton onClick={() => navigate("/member/register")}>회원가입</RegisterButton>
                     </ButtonDiv>
                     

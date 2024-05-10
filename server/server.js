@@ -45,9 +45,9 @@ app.get("/article", (req, res) => {
 app.post("/article", (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
 
-    const {title, content} = req.body;
+    const {title, content, loginNowId} = req.body;
 
-    const sqlQuery = `INSERT INTO ARTICLE(title, content) VALUES ("${title}", "${content}")`;
+    const sqlQuery = `INSERT INTO ARTICLE(title, content, writer) VALUES ("${title}", "${content}", "${loginNowId}")`;
 
     db.query(sqlQuery, (err, result) => {
         if(err) res.send(err);

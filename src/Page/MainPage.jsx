@@ -27,6 +27,7 @@ const AllContainer = styled.div`
 function MainPage() {
 
     const [article, setArticle] = useState([]);
+    const [loggedIn, setLoggedIn] = useState(false);
 
     async function fetchArticle() {
         const response = await axios.get("http://localhost:3001/article");
@@ -37,6 +38,13 @@ function MainPage() {
         fetchArticle();
     }, [article]);
 
+    useEffect(() => {
+        const loginNowId = sessionStorage.getItem("memberid");
+        
+        if(loginNowId) setLoggedIn(true);
+        else setLoggedIn(false);
+    })
+
     const navigate = useNavigate();
 
     return (
@@ -44,7 +52,11 @@ function MainPage() {
             <Button 
                 buttonTitle="글 작성하기!!!"
                 onClick={() => {
-                    navigate("/article/write")
+                    if(loggedIn) navigate("/article/write");
+                    else {
+                        alert("로그인한 유저만 게시글을 작성할 수 있습니다.");
+                        navigate("/member/login");
+                    }
                 }}
             />
             <AllContainer>
