@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../ui/Button';
 import TextInput from '../ui/TextInput';
@@ -28,11 +28,13 @@ function ModifyPage() {
     const [content, setContent] = useState("");
 
     const {articleId} = useParams();
+    const location = useLocation();
 
     const articleSubmit = (event) => {
         // alert(`${title} :: ${content}`)
+        const prevUrl = location.state;
         putArticle();
-        navigate("/article");
+        navigate(prevUrl);
         event.preventDefault();
     };
 

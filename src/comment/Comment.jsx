@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const CommentWrapper = styled.div`
     display : flex;
-    flex-direction : row;
+    flex-direction : column;
     align-items : flex-start;
     border : 1px solid grey;
     border-radius : 16px;
@@ -16,6 +16,15 @@ const CommentWrapper = styled.div`
     padding : 16px;
     margin-top : 8px;
     margin-bottom : 8px;
+`;
+
+const CommentWriter = styled.p`
+    font-size : 16px;
+    font-weight : bold;
+`;
+
+const CommentContent = styled.p`
+    font-size : 16px;
 `;
 
 const Alls = styled.div`
@@ -31,6 +40,7 @@ function Comment(props) {
     const [isClicked, setIsClicked] = useState(false);
 
     async function modifyComment() {
+        console.log(comment);
         try {
             await axios.put("http://localhost:3001/comment", {comment})
             .then(response => console.log(response))
@@ -44,14 +54,15 @@ function Comment(props) {
         <Alls>
             {isClicked ? (
                 <TextInput height={20} value={comment.comment} onChange={(event) => {setComment({
-                    id : comment.id, articleid : comment.articleid, comment : event.target.value
+                    id : comment.id, articleid : comment.articleid, comment : event.target.value, writerid : comment.writerid
                 })}}></TextInput>
             ) : (
                 <CommentWrapper>
-                    {comment.comment}
+                    <CommentWriter>댓글 작성자 : {comment.writerid}</CommentWriter>
+                    <CommentContent>댓글 : {comment.comment}</CommentContent>
                 </CommentWrapper>
             )}
-            <DeleteCommentButton commentId={comment.id}/>
+            <DeleteCommentButton commentId={comment.id} writer={comment.writerid} isClicked={isClicked}/>
             {isClicked ? (
                 <ModifyCommentButton 
                 commentId={comment.id} 
@@ -64,14 +75,19 @@ function Comment(props) {
                         modifyComment();
                     }
                     setIsClicked(!isClicked);
-                }}/>
+                }}
+                writer={comment.writerid}
+                isClicked={isClicked}
+                />
             ) : (
                 <ModifyCommentButton 
                 commentId={comment.id} 
                 onClick={() => {
                     setPreComment(comment);
                     setIsClicked(!isClicked);
-                }}/>
+                }}
+                writer={comment.writerid}
+                isClicked={isClicked}/>
             )}
             
         </Alls>

@@ -94,8 +94,9 @@ function ArticleDetail() {
   }
 
   async function postComment() {
+    const writerid = sessionStorage.getItem("memberid");
     try {
-      await axios.post(`http://localhost:3001/comment`, {articleId, comment})
+      await axios.post(`http://localhost:3001/comment`, {articleId, comment, writerid})
       .then(setComment(""))
       .catch(error => console.log(error))
     } catch (e) {
@@ -135,10 +136,17 @@ function ArticleDetail() {
         <TextInput height={20} value={comment} onChange={(event) => {setComment(event.target.value)}}></TextInput>
         <br />
         <Button buttonTitle="작성하기" onClick={(event) => {
-          if(comment === "") {
-            alert("댓글을 작성하세요");
+          const nowId = sessionStorage.getItem("memberid");
+          if(nowId != null) {
+              if(comment === "") {
+                alert("댓글을 작성하세요");
+                event.preventDefault();
+              }
+          } else {
+            alert("로그인한 사용자만 댓글을 달 수 있습니다!!");
+            setComment("");
             event.preventDefault();
-          }
+          }          
         }}></Button>
       </form>
       

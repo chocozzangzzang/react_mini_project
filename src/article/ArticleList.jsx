@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ArticleListItem from './ArticleListItem';
 import styled from 'styled-components';
 
@@ -15,7 +15,9 @@ function ArticleList(props) {
 
     return (
         <ArticleContainer>
-            {articles.map((article) => (
+            {articles 
+                && 
+                articles.map((article) => (
                 <ArticleListItem
                     key={article.id}
                     article={article}

@@ -1,12 +1,12 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { BsTrash } from "react-icons/bs";
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function DeleteButton(props) {
 
     const {articleId, writer} = props;
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const [isWriterSame, setIsWriterSame] = useState(false);
 
     useEffect(() => {
@@ -20,7 +20,7 @@ function DeleteButton(props) {
         isWriterSame ? (
                 <BsTrash onClick={() => {
                     axios.delete("http://localhost:3001/article", {params : {articleId : articleId}})
-                    .then(response => {alert(`${response.data}번 게시글을 삭제하였습니다.`); console.log(response)})
+                    .then(response => {alert(`${response.data}번 게시글을 삭제하였습니다.`); navigate("/");})
                     .catch(error => console.log(error));
                 }}/>
         ) : null

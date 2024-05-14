@@ -7,7 +7,7 @@ const PORT    = 3001; // 포트번호 설정
 
 // MySQL 연결
 const db = mysql.createPool({
-    host: "192.168.0.94", // 호스트
+    host: "172.30.1.76", // 호스트
     user: "root",      // 데이터베이스 계정
     password: "1433",      // 데이터베이스 비밀번호
     database: "reactdb",  // 사용할 데이터베이스
@@ -39,7 +39,9 @@ app.get("/article", (req, res) => {
     db.query(sqlQuery, (err, result) => {
         if(err) res.send(err);
         else res.send(result);
-    });
+        // console.log(result);
+        // console.log(err);
+        });
 });
 
 app.post("/article", (req, res) => {
@@ -60,12 +62,18 @@ app.delete("/article", (req, res) => {
 
     const {articleId} = req.query;
     
-    const sqlQuery = `DELETE FROM ARTICLE AS AT WHERE AT.ID = ${articleId}`;
-    const sqlQuery2 = `DELETE FROM COMMENT AS CT WHERE CT.ARTICLEID = ${articleId}`;
+    const sqlQuery = `DELETE FROM ARTICLE AS AT WHERE AT.ID = ${articleId};`;
+    const sqlQuery2 = `DELETE FROM COMMENT AS CT WHERE CT.ARTICLEID = ${articleId};`;
 
-    db.query(sqlQuery + sqlQuery2, (err, result) => {
+    db.query(sqlQuery, (err, result) => {
+
         if(err) res.send(err);
-        else res.send(articleId);
+        else {
+            db.query(sqlQuery2, (err2, result2) => {
+                if(err2) res.send(err2);
+                else res.send(articleId);
+            })
+        }
     });
 });
 
@@ -118,9 +126,9 @@ app.post("/comment", (req, res) => {
     
     res.header("Access-Control-Allow-Origin", "*");
 
-    const {articleId, comment} = req.body;
+    const {articleId, comment, writerid} = req.body;
 
-    const sqlQuery = `INSERT INTO COMMENT(articleid, comment) VALUES(${articleId}, "${comment}")`;
+    const sqlQuery = `INSERT INTO COMMENT(articleid, comment, writerid) VALUES(${articleId}, "${comment}", "${writerid}")`;
 
     db.query(sqlQuery, (err, result) => {
         if(err) res.send(err);
@@ -162,9 +170,16 @@ app.post("/member/register", (req, res) => {
 
     const {id, settingPW, email} = req.body;
 
+    // console.log(id, email, settingPW);
+
     const sqlQuery = `INSERT INTO MEMBER(email, memberid, memberpw) VALUES("${email}", "${id}", "${settingPW}")`;
 
+    // console.log(sqlQuery);
+
     db.query(sqlQuery, (err, result) => {
+
+        // console.log(err);
+        // console.log(result);
         if(err) res.send(err);
         else res.send(result);
     });
