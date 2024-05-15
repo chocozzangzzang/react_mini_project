@@ -27,6 +27,9 @@ function ModifyPage() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
 
+    const [writeDate, setWriteDate] = useState("");
+    const [modifyDate, setModifyDate] = useState("");
+
     const {articleId} = useParams();
     const location = useLocation();
 
@@ -42,7 +45,10 @@ function ModifyPage() {
 
     async function putArticle() {
         try {
-            await axios.put("http://localhost:3001/article", {articleId, title, content})
+            const today = new Date();
+            const modifyDate = `${today.toLocaleString()}`;
+
+            await axios.put("http://localhost:3001/article", {articleId, title, content, writeDate, modifyDate})
             .then(response => {
                 setTitle("");
                 setContent("");
@@ -59,6 +65,8 @@ function ModifyPage() {
                 .then(response => {
                     setTitle((response.data)[0].title);
                     setContent((response.data)[0].content);
+                    setWriteDate((response.data)[0].writedate);
+                    setModifyDate((response.data)[0].modifydate);
                 })
                 .catch(error => console.log(error));
         } catch (e) {

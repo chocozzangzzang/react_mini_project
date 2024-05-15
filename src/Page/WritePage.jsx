@@ -44,7 +44,10 @@ function WritePage() {
         try {
             const loginNowId = sessionStorage.getItem("memberid");
 
-            await axios.post("http://localhost:3001/article", {title, content, loginNowId})
+            const today = new Date();
+            const formattedDate = `${today.toLocaleString()}`;
+
+            await axios.post("http://localhost:3001/article", {title, content, loginNowId, formattedDate})
             .then(response => console.log(response))
             .catch(error => console.log(error));
         } catch(e) {

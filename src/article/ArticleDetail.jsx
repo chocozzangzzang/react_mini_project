@@ -55,6 +55,17 @@ const ContentWrapper = styled.div`
     justify-content : center;
 `;
 
+const ArticleDate = styled.p`
+    font-size : 12px;
+    text-align : right;
+`;
+
+const DateDiv = styled.div`
+    display : inline-block;
+    width : 100%;
+    justify-content : right;
+`;
+
 function ArticleDetail() {
 
   const [title, setTitle] = useState("");
@@ -62,6 +73,9 @@ function ArticleDetail() {
 
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
+
+  const [writeDate, setWriteDate] = useState("");
+  const [modifyDate, setModifyDate] = useState("");
 
   const [writer, setWriter] = useState("");
 
@@ -74,6 +88,8 @@ function ArticleDetail() {
                 setTitle((response.data)[0].title);
                 setContent((response.data)[0].content);
                 setWriter((response.data)[0].writer);
+                setWriteDate((response.data)[0].writedate);
+                setModifyDate((response.data)[0].modifydate);
             })
             .catch(error => console.log(error));
     } catch (e) {
@@ -95,8 +111,12 @@ function ArticleDetail() {
 
   async function postComment() {
     const writerid = sessionStorage.getItem("memberid");
+    const today = new Date();
+    const writedate = `${today.toLocaleString()}`;
+    const modifydate = `${today.toLocaleString()}`;
+
     try {
-      await axios.post(`http://localhost:3001/comment`, {articleId, comment, writerid})
+      await axios.post(`http://localhost:3001/comment`, {articleId, comment, writerid, writedate, modifydate})
       .then(setComment(""))
       .catch(error => console.log(error))
     } catch (e) {
@@ -122,13 +142,17 @@ function ArticleDetail() {
       <WrapperA>
         <ArticleWriter>작성자 : {writer}</ArticleWriter>
         <ArticleTitle>
-          #{articleId}.. {title}
+          #{articleId}. {title}
         </ArticleTitle>
         <ContentWrapper>
           <ArticleContent>{content}</ArticleContent>
           <DeleteButton articleId={articleId} writer={writer}/>
           <ModifyButton articleId={articleId} writer={writer}/>
         </ContentWrapper>
+        <DateDiv>
+                <ArticleDate>작성일자 : {writeDate}</ArticleDate>
+                <ArticleDate>수정일자 : {modifyDate}</ArticleDate>
+            </DateDiv>
       </WrapperA>
       <CommentList comments={comments}></CommentList>
       <CommentContent>==댓글 작성==</CommentContent>

@@ -33,6 +33,17 @@ const Alls = styled.div`
     align-items : center;
 `;
 
+const ArticleDate = styled.p`
+    font-size : 12px;
+    text-align : right;
+`;
+
+const DateDiv = styled.div`
+    display : inline-block;
+    width : 100%;
+    justify-content : right;
+`;
+
 function Comment(props) {
 
     const [comment, setComment] = useState(props.comment);
@@ -50,16 +61,24 @@ function Comment(props) {
         }
     }
 
+    const today = new Date();
+    const nowdate = `${today.toLocaleString()}`;
+
     return (
         <Alls>
             {isClicked ? (
                 <TextInput height={20} value={comment.comment} onChange={(event) => {setComment({
-                    id : comment.id, articleid : comment.articleid, comment : event.target.value, writerid : comment.writerid
+                    id : comment.id, articleid : comment.articleid, comment : event.target.value, 
+                    writerid : comment.writerid, writedate : comment.writedate, modifydate : nowdate
                 })}}></TextInput>
             ) : (
                 <CommentWrapper>
                     <CommentWriter>댓글 작성자 : {comment.writerid}</CommentWriter>
                     <CommentContent>댓글 : {comment.comment}</CommentContent>
+                    <DateDiv>
+                        <ArticleDate>작성일자 : {comment.writedate}</ArticleDate>
+                        <ArticleDate>수정일자 : {comment.modifydate}</ArticleDate>
+                    </DateDiv>
                 </CommentWrapper>
             )}
             <DeleteCommentButton commentId={comment.id} writer={comment.writerid} isClicked={isClicked}/>

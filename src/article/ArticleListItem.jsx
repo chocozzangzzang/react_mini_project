@@ -19,16 +19,21 @@ const ArticleTitle = styled.p`
     font-weight : bold;
 `;
 
-const ContentWrapper = styled.div`
-    display : flex;
-    flex-direction : row;
-    align-items : baseline;
-    justify-content : center;
-`;
 
 const ArticleWriter = styled.p`
     font-size : 24px;
     font-weight : bold;
+`;
+
+const ArticleDate = styled.p`
+    font-size : 12px;
+    text-align : right;
+`;
+
+const DateDiv = styled.div`
+    display : inline-block;
+    width : 100%;
+    justify-content : right;
 `;
 
 function ArticleListItem(props) {
@@ -46,6 +51,10 @@ function ArticleListItem(props) {
                 제목 : {article.title}
             </ArticleTitle>
             <ArticleWriter>작성자 : {article.writer}</ArticleWriter>
+            <DateDiv>
+                <ArticleDate>작성일자 : {article.writedate}</ArticleDate>
+                <ArticleDate>수정일자 : {article.modifydate}</ArticleDate>
+            </DateDiv>
         </Wrapper>
     )
 }

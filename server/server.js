@@ -7,7 +7,7 @@ const PORT    = 3001; // 포트번호 설정
 
 // MySQL 연결
 const db = mysql.createPool({
-    host: "172.30.1.76", // 호스트
+    host: "192.168.0.94", // 호스트
     user: "root",      // 데이터베이스 계정
     password: "1433",      // 데이터베이스 비밀번호
     database: "reactdb",  // 사용할 데이터베이스
@@ -47,9 +47,9 @@ app.get("/article", (req, res) => {
 app.post("/article", (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
 
-    const {title, content, loginNowId} = req.body;
+    const {title, content, loginNowId, formattedDate} = req.body;
 
-    const sqlQuery = `INSERT INTO ARTICLE(title, content, writer) VALUES ("${title}", "${content}", "${loginNowId}")`;
+    const sqlQuery = `INSERT INTO ARTICLE(title, content, writer, writedate, modifydate) VALUES ("${title}", "${content}", "${loginNowId}", "${formattedDate}", "${formattedDate}")`;
 
     db.query(sqlQuery, (err, result) => {
         if(err) res.send(err);
@@ -80,13 +80,13 @@ app.delete("/article", (req, res) => {
 app.put("/article", (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
 
-    const {articleId, title, content} = req.body;
+    const {articleId, title, content, writeDate, modifyDate} = req.body;
 
     // console.log(articleId);
     // console.log(title);
     // console.log(content);
 
-    const sqlQuery = `UPDATE ARTICLE SET TITLE = '${title}', CONTENT = '${content}' WHERE ID = ${articleId}`;
+    const sqlQuery = `UPDATE ARTICLE SET TITLE = '${title}', CONTENT = '${content}', WRITEDATE = '${writeDate}', MODIFYDATE = '${modifyDate}' WHERE ID = ${articleId}`;
 
     db.query(sqlQuery, (err, result) => {
         if(err) res.send(err);
@@ -126,9 +126,9 @@ app.post("/comment", (req, res) => {
     
     res.header("Access-Control-Allow-Origin", "*");
 
-    const {articleId, comment, writerid} = req.body;
+    const {articleId, comment, writerid, writedate, modifydate} = req.body;
 
-    const sqlQuery = `INSERT INTO COMMENT(articleid, comment, writerid) VALUES(${articleId}, "${comment}", "${writerid}")`;
+    const sqlQuery = `INSERT INTO COMMENT(articleid, comment, writerid, writedate, modifydate) VALUES(${articleId}, "${comment}", "${writerid}", "${writedate}", "${modifydate}")`;
 
     db.query(sqlQuery, (err, result) => {
         if(err) res.send(err);
@@ -154,9 +154,9 @@ app.put("/comment", (req, res) => {
 
     res.header("Access-Control-Allow-Origin", "*");
 
-    const {id, articleid, comment} = req.body.comment;
+    const {id, articleid, comment, writedate, modifydate} = req.body.comment;
 
-    const sqlQuery = `UPDATE COMMENT SET ARTICLEID = ${articleid}, COMMENT = "${comment}" WHERE ID = ${id}`;
+    const sqlQuery = `UPDATE COMMENT SET ARTICLEID = ${articleid}, COMMENT = "${comment}", WRITEDATE = "${writedate}", MODIFYDATE = "${modifydate}" WHERE ID = ${id}`;
 
     db.query(sqlQuery, (err, result) => {
         if(err) res.send(err);
