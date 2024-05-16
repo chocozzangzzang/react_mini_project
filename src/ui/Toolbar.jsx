@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from "styled-components";
+import Button from "@mui/material/Button";
 
 const CustomToolbar = styled.div`
     padding : 16px;
@@ -8,7 +9,6 @@ const CustomToolbar = styled.div`
     flex-direction : row;
     border-bottom : 1px solid grey;
     background : #A3C6C4;
-    max-width : 1440px;
 `;
 
 const ButtonDiv = styled.div`
@@ -63,20 +63,19 @@ function Toolbar() {
 
     return (
         <CustomToolbar>
-            <CustomA href="/">DB 연결</CustomA>
+            <Button href="/" size="large" color="secondary">REACT MINI PROJECT</Button>
             {
                 nowLoggedIn ? (
                     <ButtonDiv>
                         <NowSpan>{nowId} 님 환영합니다!!  </NowSpan>
-                        <LogoutButton onClick={() => logout()}>로그아웃</LogoutButton>
+                        <Button variant="contained" size="medium" onClick={() => logout()}>로그아웃</Button>
                     </ButtonDiv>
-                    
                 ) : (
                     <ButtonDiv>
-                        <LoginButton onClick={() => {
+                        <Button variant="outlined" size="medium" onClick={() => {
                             navigate("/member/login", {state : location.pathname});
-                        }}>로그인</LoginButton>
-                        <RegisterButton onClick={() => navigate("/member/register")}>회원가입</RegisterButton>
+                        }}>로그인</Button>
+                        <Button variant="contained" size="medium" onClick={() => navigate("/member/register")}>회원가입</Button>
                     </ButtonDiv>
                     
                 )
