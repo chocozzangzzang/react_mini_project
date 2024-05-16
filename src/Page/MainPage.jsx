@@ -1,11 +1,17 @@
 import styled from "styled-components";
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate} from 'react-router-dom';
 import ArticleList from "../article/ArticleList";
 // import Button from "../ui/Button";
 import Button from "@mui/material/Button";
-
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+ 
 const HomePage = styled.div`
   padding : 16px;
 `;
@@ -27,12 +33,11 @@ const AllContainer = styled.div`
 const Demo = styled.div``;
 
 const ButtonDiv = styled.div`
-    max-width : 1440px;
+    width : 100%;
     display : flex;
     justify-content : right;
-    padding : 24px;
+    padding-top : 16px;
 `;
-
 
 function MainPage() {
 
@@ -69,10 +74,37 @@ function MainPage() {
                     }
                 }}
             /> */}
+        <React.Fragment>
+            <Typography component="h2" variant="h6" color="primary" gutterBottom>
+                작성 게시물
+            </Typography>
+            <Table size="small">
+                <TableHead>
+                <TableRow>
+                    <TableCell>#</TableCell>
+                    <TableCell>제목</TableCell>
+                    <TableCell>작성자</TableCell>
+                    <TableCell>작성일자</TableCell>
+                    <TableCell>수정일자</TableCell>
+                </TableRow>
+                </TableHead>
+                <TableBody>
+                {article.map((oneArticle) => (
+                    <TableRow key={oneArticle.id}>
+                    <TableCell onClick={() => {navigate(`/article/${oneArticle.id}`);}}>{oneArticle.id}</TableCell>
+                    <TableCell>{oneArticle.title}</TableCell>
+                    <TableCell>{oneArticle.writer}</TableCell>
+                    <TableCell>{oneArticle.writedate}</TableCell>
+                    <TableCell>{oneArticle.modifydate}</TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+        </React.Fragment>
 
-        <AllContainer>
+        {/* <AllContainer>
             <ArticleList articles={article}/>
-        </AllContainer>
+        </AllContainer> */}
         <ButtonDiv>
             <Button 
                 variant="contained"

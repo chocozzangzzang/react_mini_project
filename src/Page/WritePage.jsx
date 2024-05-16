@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
-import Button from '../ui/Button';
+// import Button from '../ui/Button';
+import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import TextInput from '../ui/TextInput';
 import axios from 'axios';
+import TextField from '@mui/material/TextField';
+import { Typography } from '@mui/material';
+
 
 const HomePage = styled.div`
     padding : 32px;
@@ -88,8 +92,30 @@ function WritePage() {
     return (
     <HomePage>
         <form onSubmit={articleSubmit}>
+            <AllContainer>
+                <Typography component="h2" variant="h6" color="primary" gutterBottom>
+                    게시물 작성 페이지
+                </Typography>
+                <TextField 
+                    label="제목" 
+                    variant='outlined' margin="normal" 
+                    value={title} onChange={(event) => {setTitle(event.target.value)}}
+                    required={true} />
+                <TextField 
+                    label="내용" 
+                    multiline rows={5} 
+                    variant='outlined' margin="normal"
+                    value={content} onChange={(event) => {setContent(event.target.value)}}
+                    required={true}/>
+                {/* <Label>제목</Label>
+                <TextInput type="text" height={20} value={title} onChange={(event) => {setTitle(event.target.value)}}/>
+                <Label>내용</Label>        
+                <TextInput type="text" height={240} value={content} onChange={(event) => {setContent(event.target.value)}}></TextInput> */}
+            </AllContainer>
             <Button
-                buttonTitle="작성 완료"
+                type="submit"
+                variant="outlined" 
+                size="medium"
                 onClick={(event) => {
                     if(title === "" || content === "") {
                         alert("제목이나 내용을 입력하시오!!");
@@ -98,13 +124,7 @@ function WritePage() {
                         alert("게시물을 작성하였습니다!!");
                     }
                 }}
-            />
-            <AllContainer>
-                <Label>제목</Label>
-                <TextInput type="text" height={20} value={title} onChange={(event) => {setTitle(event.target.value)}}/>
-                <Label>내용</Label>        
-                <TextInput type="text" height={240} value={content} onChange={(event) => {setContent(event.target.value)}}></TextInput>
-            </AllContainer>
+            >작성 완료</Button>
         </form>
     </HomePage>
     
