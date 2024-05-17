@@ -12,6 +12,7 @@ import LoginPage from './Page/LoginPage';
 import SignUp from './Page/DesignedRegister';
 import Login from './Page/DesignedLogin';
 import AppAppBar from './ui/AppAppBar';
+import DesignedArticleDetail from './article/DesignedArticleDetail';
 
 // const MainTitleText = styled.p`
 //   font-size : 24px;
@@ -28,7 +29,8 @@ function App() {
       <Routes>
           <Route index element={<MainPage />}></Route>
           <Route path="/article" element={<MainPage />}></Route>
-          <Route path="/article/:articleId" element={<ArticleDetail />}></Route>
+          {/* <Route path="/article/:articleId" element={<ArticleDetail />}></Route> */}
+          <Route path="/article/:articleId" element={<DesignedArticleDetail />}></Route>
           <Route path="/article/write" element={<WritePage />}></Route>
           <Route path="/article/modify/:articleId" element={<ModifyPage />}></Route>
           {/* <Route path="/member/register" element={<RegisterPage />}></Route> */}
