@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ButtonGroup } from '@mui/material';
 
 const ButtonDiv = styled.div`
     margin-left : auto;
@@ -63,11 +64,14 @@ export default function AppAppBar() {
                             </ButtonDiv>
                         ) : (
                             <ButtonDiv>
-                                <Button variant="contained" size="medium" onClick={() => {
-                                    navigate("/member/login", {state : location.pathname});
-                                }}>로그인</Button>
-                                <Button variant="contained" size="medium" onClick={() => 
-                                    navigate("/member/register")}>회원가입</Button>
+                                <ButtonGroup variant='contained' aria-label="Basic button group">
+                                    <Button size="medium" onClick={() => {
+                                        navigate("/member/login", {state : location.pathname});
+                                    }}>로그인</Button>
+                                    <Button size="medium" onClick={() => 
+                                        navigate("/member/register")}>회원가입</Button>
+                                </ButtonGroup>
+                                
                             </ButtonDiv>
                         )
                     }

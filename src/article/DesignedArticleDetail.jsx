@@ -115,7 +115,7 @@ function DesignedArticleDetail() {
                         {content}
                         </Typography>
                         <Typography variant="subtitle1" color="text.secondary">
-                        수정일자 : {modifyDate} 작성일자 : {writeDate} 
+                        작성일자 : {writeDate} 수정일자 : {modifyDate} 
                         </Typography>
                     </CardContent>
                     </Card>
