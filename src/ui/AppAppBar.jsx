@@ -6,9 +6,11 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ButtonGroup } from '@mui/material';
+import MenuIcon from "@mui/icons-material/Menu";
+import Drawer from "@mui/material/Drawer";
+import { mainListItems, secondaryListItems } from './ListItems.jsx';
 
 const ButtonDiv = styled.div`
     margin-left : auto;
@@ -37,6 +39,11 @@ export default function AppAppBar() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [open, setOpen] = React.useState(true);
+    const toggleDrawer = () => {
+        setOpen(!open);
+    };
+
     useEffect(() => {
       const loginNowId = sessionStorage.getItem("memberid");
       if(loginNowId !== null) {
@@ -52,9 +59,22 @@ export default function AppAppBar() {
 
     return (
         <ThemeProvider theme={darkTheme}>
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ display: 'flex' }}>
                 <AppBar position="static">
                 <Toolbar>
+                <IconButton
+                    onClick={toggleDrawer}
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+
+                >
+                <Drawer open={open}>
+                    {mainListItems}
+                </Drawer>
+                <MenuIcon />
+                </IconButton>
                     <Button href="/" size="large" color="secondary">REACT MINI PROJECT</Button>
                     {
                         nowLoggedIn ? (
