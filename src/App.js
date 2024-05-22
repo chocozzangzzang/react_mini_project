@@ -13,6 +13,7 @@ import SignUp from './Page/DesignedRegister';
 import Login from './Page/DesignedLogin';
 import AppAppBar from './ui/AppAppBar';
 import DesignedArticleDetail from './article/DesignedArticleDetail';
+import Forecast from './forecast/Forecast';
 
 // const MainTitleText = styled.p`
 //   font-size : 24px;
@@ -37,6 +38,7 @@ function App() {
           <Route path="/member/register" element={<SignUp />}></Route>
           {/* <Route path="/member/login" element={<LoginPage />}></Route> */}
           <Route path="/member/login" element={<Login />}></Route>
+          <Route path="/forecast" element={<Forecast />}></Route>
       </Routes>
     </BrowserRouter>
       

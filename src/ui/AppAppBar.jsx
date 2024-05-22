@@ -10,7 +10,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ButtonGroup } from '@mui/material';
 import MenuIcon from "@mui/icons-material/Menu";
 import Drawer from "@mui/material/Drawer";
-import { mainListItems, secondaryListItems } from './ListItems.jsx';
+import ListItems from './ListItems.jsx';
 
 const ButtonDiv = styled.div`
     margin-left : auto;
@@ -71,7 +71,7 @@ export default function AppAppBar() {
 
                 >
                 <Drawer open={open}>
-                    {mainListItems}
+                    <ListItems />
                 </Drawer>
                 <MenuIcon />
                 </IconButton>
