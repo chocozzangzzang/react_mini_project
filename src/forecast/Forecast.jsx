@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import Typography from "@mui/material/Typography";
+import axios from 'axios';
 
 const HomePage = styled.div`
   padding : 16px;
@@ -53,6 +54,52 @@ function convertXY(lat, lon) {
   return rs;
 }
 
+function setBaseTime(hour, minute) {
+  var baseTime = "";
+  if(hour < 2) baseTime += "2300";
+  else if (hour == 2) {
+    if(minute <= 15) baseTime += "2300";
+    else baseTime += "0200";
+  }
+  else if (hour < 5) baseTime += "0200";
+  else if (hour == 5) {
+    if(minute <= 15) baseTime += "0200";
+    else baseTime += "0500";
+  }
+  else if (hour < 8) baseTime += "0500";
+  else if (hour == 8) {
+    if(minute <= 15) baseTime += "0500";
+    else baseTime += "0800";
+  }
+  else if (hour < 11) baseTime += "0800";
+  else if (hour == 11) {
+    if(minute <= 15) baseTime += "0800";
+    else baseTime += "1100";
+  }
+  else if (hour < 14) baseTime += "1100";
+  else if (hour == 14) {
+    if(minute <= 15) baseTime += "1100";
+    else baseTime += "1400";
+  }
+  else if (hour < 17) baseTime += "1400";
+  else if (hour == 17) {
+    if(minute <= 15) baseTime += "1400";
+    else baseTime += "1700";
+  }
+  else if (hour < 20) baseTime += "1700";
+  else if (hour == 20) {
+    if(minute <= 15) baseTime += "1700";
+    else baseTime += "2000";
+  }
+  else if (hour < 23) baseTime += "2000";
+  else if (hour == 23) {
+    if(minute <= 15) baseTime += "2000";
+    else baseTime += "2300";
+  } else baseTime += "2300";
+
+  return baseTime;
+}
+
 function Forecast() {
 
   const [lat, setLat] = useState("");
@@ -60,16 +107,28 @@ function Forecast() {
   const [gridX, setGridX] = useState("");
   const [gridY, setGridY] = useState("");
   const [nowDate, setNowDate] = useState("");
+  const [forecastData, setForecastData] = useState([]);
+  const [forecastIsFull, setForecastIsFull] = useState(false);
 
   useEffect(() => {
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        setLat(position.coords.latitude);
-        setLon(position.coords.longitude);
+        
+        if(position.coords.latitude >= 33 && position.coords.latitude <= 39
+          && position.coords.longitude >= 125 && position.coords.longitude <= 132
+        ) {
+          setLat(position.coords.latitude);
+          setLon(position.coords.longitude);
 
-        var result = convertXY(lat, lon);
-        setGridX(result.x);
-        setGridY(result.y);
+          var result = convertXY(lat, lon);
+          setGridX(result.x);
+          setGridY(result.y);
+
+        }
+      })}
+  });
+
+  useEffect(() => {
 
         const today = new Date();
         const formattedDate = `${today.toLocaleString()}`;
@@ -77,29 +136,96 @@ function Forecast() {
         var year  = today.getFullYear();
         var month = today.getMonth() + 1;
         var day   = today.getDate();
+        var hour  = today.getHours();
+        var min   = today.getMinutes();
+        var base_date = "";
          
         year = year.toString();
         if(month < 10) month = "0" + month.toString();
-        if(day < 10) day = "0" + day.toString();
+        else month = month.toString();
 
-        console.log(year + month + day);
+        if(day < 10) day = "0" + day.toString();
+        else day = day.toString();
+        
+        var bd = setBaseTime(hour, min);
+
+        if(hour < 2 || (hour == 2 && min <= 15)) {
+          var yesterday = new Date(today);
+          yesterday.setDate(today.getDate() - 1);
+
+          var yesterday_year  = yesterday.getFullYear();
+          var yesterday_month = yesterday.getMonth() + 1;
+          var yesterday_day   = yesterday.getDate();
+          
+          yesterday_year = yesterday_year.toString();
+          if(yesterday_month < 10) yesterday_month = "0" + yesterday_month.toString();
+          else yesterday_month = yesterday_month.toString();
+
+          if(yesterday_day < 10) yesterday_day = "0" + yesterday_day.toString();
+          else yesterday_day = yesterday_day.toString();
+
+          base_date += (yesterday_year + yesterday_month + yesterday_day);
+        } else {
+          base_date += (year + month + day);
+        }
 
         const key = "0DZUAX87M9kJWvxPJWL3raL5m9BYWp2N%2FzlC8zZYrvAg6Lwvv7WqwI4%2Bvb729zpp8rxMBKyp29N7kJEzNwrdhQ%3D%3D";
         const pageNo = 1;
         const numOfRows = 1000;
         const dataType = "JSON";
-        const base_date = year + month + day;
-        const base_time = "0200";
-        const nx = gridX;
-        const ny = gridY;
+        const base_time = bd;
+        const nx = gridX.toString();
+        const ny = gridY.toString();
 
         setNowDate(formattedDate);
-      })
-    } else {
-      setLat("xx");
-      setLon("yy");
-    }
-  });
+
+        const fetchData = async() => {
+
+          var url = 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst'; /*URL*/
+          var queryParams = '?' + encodeURIComponent('serviceKey') + '=' + key; /*Service Key*/
+          queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent(pageNo); /**/
+          queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent(numOfRows); /**/
+          queryParams += '&' + encodeURIComponent('dataType') + '=' + encodeURIComponent(dataType); /**/
+          queryParams += '&' + encodeURIComponent('base_date') + '=' + encodeURIComponent(base_date); /**/
+          queryParams += '&' + encodeURIComponent('base_time') + '=' + encodeURIComponent(base_time); /**/
+          queryParams += '&' + encodeURIComponent('nx') + '=' + encodeURIComponent(nx); /**/
+          queryParams += '&' + encodeURIComponent('ny') + '=' + encodeURIComponent(ny); /**/
+          
+          console.log(url + queryParams);
+          const result = await axios.get(url + queryParams);
+          // console.log(result);
+          return result.data;
+        }
+        
+        fetchData().then(res => {
+          const code = res.response.header.resultCode;
+          if(code === "00") {
+            const data = res.response.body.items.item;
+            var temp = []
+            var counter = 1;
+            if(data.length > 0) {
+              data.forEach(foreData => {
+                if(foreData.category === "TMP") {
+                  temp.push({
+                    id : counter,
+                    fcstDate : foreData.fcstDate,
+                    fcstTime : foreData.fcstTime,
+                    fcstVal  : foreData.fcstValue,
+                  });
+                  counter += 1;
+                }              
+              });
+
+              console.log(temp);
+            }
+          }
+        });
+  }, [gridX, gridY]);
+
+  useEffect(() => {
+    setForecastIsFull(true);
+  }, [forecastData]);
+      
  
   return (
     <HomePage>
@@ -109,6 +235,11 @@ function Forecast() {
         <h1>현재시간 : {nowDate}</h1>
         <h1>{lat},,{lon}</h1>
         <h1>{gridX},,{gridY}</h1>
+        <div>
+          {
+            forecastIsFull && <h3>data is loaded.....</h3>
+          }
+        </div>
     </HomePage>
   )
 }
