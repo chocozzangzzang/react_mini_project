@@ -7,7 +7,7 @@ const PORT    = 3001; // 포트번호 설정
 
 // MySQL 연결
 const db = mysql.createPool({
-    host: "192.168.219.220", // 호스트
+    host: "192.168.0.94", // 호스트
     user: "root",      // 데이터베이스 계정
     password: "1433",      // 데이터베이스 비밀번호
     database: "reactdb",  // 사용할 데이터베이스

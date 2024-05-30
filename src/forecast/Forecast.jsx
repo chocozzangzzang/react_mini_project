@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import Typography from "@mui/material/Typography";
 import axios from 'axios';
-import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 const HomePage = styled.div`
   padding : 16px;
@@ -146,6 +146,10 @@ function setBaseTime(hour, minute) {
   return baseTime;
 }
 
+const formatXAxis = (xTick) => {
+  return `${xTick.substring(0, 2)}:${xTick.substring(2, 4)}`;
+};
+
 function Forecast() {
 
   const [lat, setLat] = useState("");
@@ -155,6 +159,7 @@ function Forecast() {
   const [nowDate, setNowDate] = useState("");
   const [forecastData, setForecastData] = useState([]);
   const [forecastIsFull, setForecastIsFull] = useState(false);
+  const [address, setAddress] = useState("");
 
   useEffect(() => {
     if(navigator.geolocation) {
@@ -237,7 +242,7 @@ function Forecast() {
           queryParams += '&' + encodeURIComponent('nx') + '=' + encodeURIComponent(nx); /**/
           queryParams += '&' + encodeURIComponent('ny') + '=' + encodeURIComponent(ny); /**/
           
-          console.log(url + queryParams);
+          // console.log(url + queryParams);
           const result = await axios.get(url + queryParams);
           // console.log(result);
           return result.data;
@@ -262,8 +267,24 @@ function Forecast() {
                 }              
               });
 
-              console.log(temp);
+              // console.log(temp);
               setForecastData(temp);
+              const fetchAddress = async() => {
+
+                var url = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json";
+                var queryParams = "?" + encodeURIComponent('x') + "=" + lon;
+                queryParams += "&" + encodeURIComponent('y') + "=" + lat;
+          
+                const result = await axios.get(url + queryParams, {headers : `Authorization : KakaoAK ${process.env.REACT_APP_KAKAO_KEY}`});
+                return result; 
+              };
+          
+              fetchAddress().then(res => {
+                const address = res.data.documents[1];
+                const nowAddr = address.region_1depth_name + " " + address.region_2depth_name + " " + address.region_3depth_name;
+                setAddress(nowAddr);
+                // console.log(nowAddr);
+              })
             }
           }
         });
@@ -272,37 +293,34 @@ function Forecast() {
   useEffect(() => {
     setForecastIsFull(true);
   }, [forecastData]);
-      
- 
+
+  const customInterval = (index) => {
+    return index % 1 === 0; // 1 간격으로 tick 표시
+  };
+  
   return (
     <HomePage>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
             날씨 페이지
         </Typography>
-        <h1>현재시간 : {nowDate}</h1>
-        <h1>{lat},,{lon}</h1>
-        <h1>{gridX},,{gridY}</h1>
-        <div>
-          {
-            forecastIsFull && <h3>data is loaded.....</h3>
-          }
-        </div>
-        <h1>LineChartTest</h1>
-        <LineChart width={600} height={300} data={forecastData}>
-        <Line type="monotone" dataKey="fcstVal" stroke="#0CD3FF" strokeWidth={3} />
-        {/* <Line
-          type="monotone"
-          dataKey="angular"
-          stroke="#a6120d"
-          strokeWidth={3}
-        />
-        <Line type="natural" dataKey="vue" stroke="#FFCA29" strokeWidth={3} /> */}
-        <CartesianGrid stroke="#ccc" />
-        <YAxis type="number" domain={['dataMin', 'dataMax']} />
-        <XAxis dataKey="fcstTime" />
-        <Tooltip />
-        <Legend />
-      </LineChart>
+        <h1>현재 시간 : {nowDate}</h1>
+        <h1>현재 위치 : {address}</h1>
+        <ResponsiveContainer width={'100%'} height={400}>
+          <LineChart margin={{ top : 30, right : 60 }} width={600} height={300} data={forecastData}>
+          <Line name="기온" type="monotone" dataKey="fcstVal" stroke="#f7e600" strokeWidth={3} />
+          <CartesianGrid stroke="#ccc" />
+          <YAxis 
+            label={{ value : '°C', offset : 10, position : 'top'}} 
+            type="number" domain={['dataMin - 1', 'dataMax + 1']}
+            tickCount = {50} interval={customInterval}
+          />
+          <XAxis 
+            label={{ value : '시간', offset : 20, position : 'right'}}
+            tickFormatter={formatXAxis} dataKey="fcstTime" />
+          {/* <Tooltip /> */}
+          <Legend />
+          </LineChart>
+        </ResponsiveContainer>
     </HomePage>
   )
 }
