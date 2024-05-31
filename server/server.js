@@ -203,7 +203,24 @@ app.post("/member/login", (req, res) => {
             }
         }
     })
+})
 
+app.get("/address/get", (req, res) => {
+
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const sqlQuery = "SELECT * FROM ADDRESSTABLE";
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else {
+            if(result.lenght == 0) {
+                res.send("NOT FOUND");
+            } else {
+                res.send(result);
+            }
+        }
+    })
 })
 
 module.exports = app;

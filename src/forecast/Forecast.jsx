@@ -3,55 +3,12 @@ import styled from 'styled-components';
 import Typography from "@mui/material/Typography";
 import axios from 'axios';
 import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import data from "../data.json";
+import { Button } from '@mui/material';
 
 const HomePage = styled.div`
   padding : 16px;
 `;
-
-const testdata = [
-  {
-    name: "2017",
-    react: 32,
-    angular: 37,
-    vue: 60,
-  },
-  {
-    name: "2018",
-    react: 42,
-    angular: 42,
-    vue: 54,
-  },
-  {
-    name: "2019",
-    react: 51,
-    angular: 41,
-    vue: 54,
-  },
-  {
-    name: "2020",
-    react: 60,
-    angular: 37,
-    vue: 28,
-  },
-  {
-    name: "2021",
-    react: 51,
-    angular: 31,
-    vue: 27,
-  },
-  {
-    name: "2022",
-    react: 95,
-    angular: 44,
-    vue: 49,
-  },
-  {
-    name: "2023",
-    react: 97,
-    angular: 42,
-    vue: 52,
-  },
-];
 
 const RE = 6371.00877; // 지구 반경(km)
 const GRID = 5.0; // 격자 간격(km)
@@ -160,9 +117,12 @@ function Forecast() {
   const [forecastData, setForecastData] = useState([]);
   const [forecastIsFull, setForecastIsFull] = useState(false);
   const [address, setAddress] = useState("");
+  const [allLatLons, setAllLatLons] = useState({});
+  const [allDataFetched, setAllDataFetched] = useState(false);
+  const [isLocalData, setIsLocalData] = useState(true);
 
   useEffect(() => {
-    if(navigator.geolocation) {
+    if(navigator.geolocation && isLocalData) {
       navigator.geolocation.getCurrentPosition((position) => {
         
         if(position.coords.latitude >= 33 && position.coords.latitude <= 39
@@ -294,17 +254,106 @@ function Forecast() {
     setForecastIsFull(true);
   }, [forecastData]);
 
+  useEffect(() => {
+
+    setAllLatLons(data);
+    setAllDataFetched(true);
+    // const fetchAllLatLon = async() => {
+    //   const response = await axios.get("http://localhost:3001/address/get");
+    //   return response;
+    // };
+    
+    // fetchAllLatLon().then(res => {
+    //   setAllLatLons(res.data);
+    //   setAllDataFetched(true);
+    // });
+
+  }, []);
+
   const customInterval = (index) => {
     return index % 1 === 0; // 1 간격으로 tick 표시
   };
+
+  const [selectFirst, setSelectFirst] = useState("");
+  const [selectSecond, setSelectSecond] = useState("");
+  const [selectThird, setSelectThird] = useState("");
+
+  const handleFirstChange = (event) => {
+    setSelectFirst(event.target.value);
+    setSelectSecond('');
+    setSelectThird('');
+  };
+  const handleSecondChange = (event) => {
+    setSelectThird('');
+    setSelectSecond(event.target.value);
+  };
+  const handleThirdChange = (event) => {
+    setSelectThird(event.target.value);
+  };
   
+  const getWeather = () => {
+    setAddress(selectFirst + " " + selectSecond + " " + selectThird);
+
+    const getlat = data['lat/lon'][selectThird][1];
+    const getlon = data['lat/lon'][selectThird][0]; 
+
+    setLat(getlat);
+    setLon(getlon);
+
+    var result = convertXY(lat, lon);
+    setGridX(result.x);
+    setGridY(result.y);
+
+    setIsLocalData(false);
+  }
+
   return (
     <HomePage>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
             날씨 페이지
         </Typography>
-        <h1>현재 시간 : {nowDate}</h1>
-        <h1>현재 위치 : {address}</h1>
+        <h3>현재 시간 : {nowDate}</h3>
+        <h3>{address} 의 날씨</h3>
+        {
+          allDataFetched && (
+            <select value={selectFirst} onChange={handleFirstChange}>
+              {
+                (allLatLons['metro']).map((metro) => (
+                  <option key={metro} value={metro}>
+                    {metro}
+                  </option>
+                ))
+              }
+            </select>
+          )
+        }
+        {
+          selectFirst && (
+            <select value={selectSecond} onChange={handleSecondChange}>
+              {
+                (allLatLons['city'][selectFirst]).map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))
+              }
+            </select>
+          )
+        }
+        {
+          selectSecond && (
+            <select value={selectThird} onChange={handleThirdChange}>
+              {
+                (allLatLons['dong'][selectSecond]).map((dong) => (
+                  <option key={dong} value={dong}>
+                    {dong}
+                  </option>
+                ))
+              }
+            </select>
+          )
+        }
+        <Button onClick={getWeather}>SELECT</Button>
         <ResponsiveContainer width={'100%'} height={400}>
           <LineChart margin={{ top : 30, right : 60 }} width={600} height={300} data={forecastData}>
           <Line name="기온" type="monotone" dataKey="fcstVal" stroke="#f7e600" strokeWidth={3} />
