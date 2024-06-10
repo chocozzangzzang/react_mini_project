@@ -13,6 +13,14 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
+import dayjs from "dayjs";
+
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -30,6 +38,12 @@ const GeneralSpan = styled.span`
     font-weight : bold;
 `;
 
+const datePickerFormat = "YYYY년 MM월 DD일";
+const datePickerUtils = {
+  format : datePickerFormat,
+  parse : (value) => dayjs(value, datePickerFormat, true).toDate(),
+};
+
 export default function SignUp() {
 
     const [email, setEmail] = useState("");
@@ -39,6 +53,8 @@ export default function SignUp() {
     const [isPwSame, setIsPwSame] = useState(false);
     const [isPwValid, setIsPwValid] = useState(false);
     const [isEmailValid, setIsEmailValid] = useState(false);
+    const [birth, setBirth] = useState(dayjs(new Date()).format(datePickerFormat));
+    const [gender, setGender] = useState("");
 
     const PWD_REGEX = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*]).{1,10}$/;
     const EMAIL_REGEX = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
@@ -68,10 +84,10 @@ export default function SignUp() {
         const cryptoPW = CryptoJS.AES.encrypt(JSON.stringify(data), secretKey);
         const settingPW = cryptoPW.toString();
 
-        console.log(settingPW);
+        // console.log(settingPW);
 
         try {
-            await axios.post("http://localhost:3001/member/register", {id, settingPW, email})
+            await axios.post("http://localhost:3001/member/register", {id, settingPW, email, birth, gender})
             .then(response => {console.log(response); alert("회원가입 되었습니다");})
             .catch(error => console.log(error));
         } catch(e) {
@@ -84,25 +100,34 @@ export default function SignUp() {
         setEmail("");
         setPw("");
         setPwConfirm("");
+        setBirth(dayjs(new Date()).format(datePickerFormat));
+        setGender("");
         setIsPwSame(false);
         setIsEmailValid(false);
         setIsPwValid(false);
     }
 
     const memberRegister = (event) => {
-
-        if(isEmailValid && isPwValid && isPwSame && id !== "") {
-            register();
-            clearAll();
-            navigate("/");
-            event.preventDefault();
-        } else {
-            alert("입력하지 않은 칸이 있습니다!!");
-            event.preventDefault();
-        }
-
-        
+      
+      if(isEmailValid && isPwValid && isPwSame && id !== "") {
+          register();
+          clearAll();
+          navigate("/");
+          event.preventDefault();
+      } else {
+          alert("입력하지 않은 칸이 있습니다!!");
+          event.preventDefault();
+      }
     }
+
+  const birthChangeHandler = (date) => {
+    const formattedDate = dayjs(date).format(datePickerFormat);
+    setBirth(formattedDate);
+  }
+
+  const genderChangeHandler = (event) => {
+    setGender(event.target.value);
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -125,6 +150,7 @@ export default function SignUp() {
           <Box component="form" noValidate onSubmit={memberRegister} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
+                <InputLabel id="demo-simple-select-required-label">EMAIL</InputLabel>
                 <TextField
                     value={email}
                     onChange={(event) => {setEmail(event.target.value)}}
@@ -142,6 +168,7 @@ export default function SignUp() {
                 }
               </Grid>
               <Grid item xs={12}>
+              <InputLabel id="demo-simple-select-required-label">ID</InputLabel>
                 <TextField
                     value={id}
                     onChange={(event) => {setId(event.target.value)}}
@@ -155,6 +182,33 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
+                <InputLabel id="demo-simple-select-required-label">BIRTH</InputLabel>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    slotProps={{ textField: { fullWidth: true } }} 
+                    label="생년월일을 입력하세요."
+                    format="YYYY년 MM월 DD일"
+                    onChange={(date) => {birthChangeHandler(date);}}
+
+                  />
+                </LocalizationProvider>
+              </Grid>
+              <Grid item xs={12}>
+                <InputLabel id="demo-simple-select-required-label">GENDER</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="demo-simple-select-disabled-label"
+                  id="demo-simple-select-disabled"
+                  value={gender}
+                  label="Gender *"
+                  onChange={genderChangeHandler}
+                >
+                  <MenuItem  value="남자">남자</MenuItem>
+                  <MenuItem  value="여자">여자</MenuItem>
+                </Select>
+              </Grid>
+              <Grid item xs={12}>
+                <InputLabel id="demo-simple-select-required-label">PASSWORD</InputLabel>
                 <TextField
                     value={pw}
                     onChange={(event) => {setPw(event.target.value)}}
@@ -173,6 +227,7 @@ export default function SignUp() {
                 }
               </Grid>
               <Grid item xs={12}>
+                <InputLabel id="demo-simple-select-required-label">PASSWORD CONFIRM</InputLabel>
                 <TextField
                     value={pwConfirm}
                     onChange={(event) => {setPwConfirm(event.target.value)}}
