@@ -55,11 +55,14 @@ export default function SignUp() {
     const [isEmailValid, setIsEmailValid] = useState(false);
     const [birth, setBirth] = useState(dayjs(new Date()).format(datePickerFormat));
     const [gender, setGender] = useState("");
+    const [birthIsSelected, setBirthIsSelected] = useState(false);
 
     const PWD_REGEX = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*]).{1,10}$/;
     const EMAIL_REGEX = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 
     const navigate = useNavigate();
+    
+    const dateMax = dayjs().add(-1, 'day');
 
     useEffect(() => {
         if(pw === pwConfirm && pw !== "" && isPwValid) setIsPwSame(true);
@@ -105,11 +108,14 @@ export default function SignUp() {
         setIsPwSame(false);
         setIsEmailValid(false);
         setIsPwValid(false);
+        setBirthIsSelected(false);
     }
 
     const memberRegister = (event) => {
       
-      if(isEmailValid && isPwValid && isPwSame && id !== "") {
+      console.log(dayjs(birth));
+
+      if(isEmailValid && isPwValid && isPwSame && id !== "" && gender !== "" && birthIsSelected) {
           register();
           clearAll();
           navigate("/");
@@ -123,6 +129,7 @@ export default function SignUp() {
   const birthChangeHandler = (date) => {
     const formattedDate = dayjs(date).format(datePickerFormat);
     setBirth(formattedDate);
+    setBirthIsSelected(true);
   }
 
   const genderChangeHandler = (event) => {
@@ -189,7 +196,8 @@ export default function SignUp() {
                     label="생년월일을 입력하세요."
                     format="YYYY년 MM월 DD일"
                     onChange={(date) => {birthChangeHandler(date);}}
-
+                    maxDate={dateMax}
+                    // disableFuture
                   />
                 </LocalizationProvider>
               </Grid>
