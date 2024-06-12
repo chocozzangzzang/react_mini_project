@@ -7,7 +7,7 @@ const PORT    = 3001; // 포트번호 설정
 
 // MySQL 연결
 const db = mysql.createPool({
-    host: "172.29.104.151", // 호스트
+    host: "192.168.194.24", // 호스트
     user: "root",      // 데이터베이스 계정
     password: "1433",      // 데이터베이스 비밀번호
     database: "reactdb",  // 사용할 데이터베이스
@@ -186,6 +186,26 @@ app.post("/member/register", (req, res) => {
 });
 
 app.post("/member/login", (req, res) => {
+
+    res.header("Access-Control-Allow-Origin", "*");
+
+    const {email} = req.body;
+
+    const sqlQuery = `SELECT * FROM MEMBER AS MT WHERE MT.EMAIL = "${email}"`
+
+    db.query(sqlQuery, (err, result) => {
+        if(err) res.send(err);
+        else {
+            if(result.length == 1) {
+                res.send(result[0]);
+            } else {
+                res.send("NOT FOUND");
+            }
+        }
+    })
+})
+
+app.post("/member/getDetail", (req, res) => {
 
     res.header("Access-Control-Allow-Origin", "*");
 

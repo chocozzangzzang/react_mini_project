@@ -81,6 +81,7 @@ export default function AppAppBar() {
                             <ButtonDiv>
                                 <NowSpan>{nowId} 님 환영합니다!!  </NowSpan>
                                 <Button variant="contained" size="medium" onClick={() => logout()}>로그아웃</Button>
+                                <Button variant="contained" size="medium" onClick={() => navigate("/member/detail")}>회원정보</Button>
                             </ButtonDiv>
                         ) : (
                             <ButtonDiv>
