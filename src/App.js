@@ -15,6 +15,7 @@ import AppAppBar from './ui/AppAppBar';
 import DesignedArticleDetail from './article/DesignedArticleDetail';
 import Forecast from './forecast/Forecast';
 import MemberDetail from './Page/MemberDetail';
+import TestMain from './Page/TestMain';
 
 // const MainTitleText = styled.p`
 //   font-size : 24px;
@@ -29,10 +30,14 @@ function App() {
       {/* <Toolbar></Toolbar> */}
       <AppAppBar></AppAppBar>
       <Routes>
-          <Route index element={<MainPage />}></Route>
-          <Route path="/article" element={<MainPage />}></Route>
+          {/* <Route index element={<MainPage />}></Route>
+          <Route path="/article" element={<MainPage />}></Route> */}
+
+          <Route index element={<TestMain />}></Route>
+          <Route path="/article" element={<TestMain />}></Route>
+
           {/* <Route path="/article/:articleId" element={<ArticleDetail />}></Route> */}
-          <Route path="/article/:articleId" element={<DesignedArticleDetail />}></Route>
+          {/* <Route path="/article/:articleId" element={<DesignedArticleDetail />}></Route> */}
           <Route path="/article/write" element={<WritePage />}></Route>
           <Route path="/article/modify/:articleId" element={<ModifyPage />}></Route>
           {/* <Route path="/member/register" element={<RegisterPage />}></Route> */}
