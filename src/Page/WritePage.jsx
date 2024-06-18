@@ -8,6 +8,9 @@ import axios from 'axios';
 import TextField from '@mui/material/TextField';
 import { Typography } from '@mui/material';
 
+import { collection, addDoc, getDoc, doc, updateDoc, increment, setDoc } from "firebase/firestore";
+import { db } from '../firebase';
+
 
 const HomePage = styled.div`
     padding : 32px;
@@ -51,9 +54,33 @@ function WritePage() {
             const today = new Date();
             const formattedDate = `${today.toLocaleString()}`;
 
-            await axios.post("http://localhost:3001/article", {title, content, loginNowId, formattedDate})
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
+            const docRef = doc(db, "BoardCounter", "BoardCounter");
+            const counterSnap = await getDoc(docRef);
+
+            if(counterSnap.exists()) {
+                const data = counterSnap.data();
+                const articleId = data.counter + 1;
+                
+                const boardRef = await setDoc(doc(db, "ReactBoard", articleId.toString()), {
+                    articleId : articleId,
+                    title : title,
+                    content : content,
+                    writer : loginNowId,
+                    writeDate : formattedDate,
+                    modifyDate : formattedDate,
+                    imageUrl : ""
+                });
+
+                const counterRef = await updateDoc(doc(db, "BoardCounter", "BoardCounter"), {
+                    counter : increment(1),
+                });
+            }
+
+            
+
+            // await axios.post("http://localhost:3001/article", {title, content, loginNowId, formattedDate})
+            // .then(response => console.log(response))
+            // .catch(error => console.log(error));
         } catch(e) {
             console.log(e.message);
         }

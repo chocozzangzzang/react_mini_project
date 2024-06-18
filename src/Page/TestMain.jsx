@@ -15,7 +15,8 @@ import Typography from '@mui/material/Typography';
 // firebase.js에서 db를 import
 import { db, firebaseStorage } from '../firebase';
 // firestore의 메서드 import
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
+
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 
@@ -48,36 +49,36 @@ const ButtonDiv = styled.div`
 
 function TestMain() {
 
-    const [article, setArticle] = useState([]);
     const [loggedIn, setLoggedIn] = useState(false);
 
-    const [test, setTest] = useState();
+    const [board, setBoard] = useState();
+    const [boardExists, setBoardExists] = useState(false);
 
     async function fetchArticle() {
 
-        const docRef = doc(db, "ReactBoard", "TEST");
+        const docRef = collection(db, "ReactBoard");
         // 참조에 대한 Snapshot 쿼리
+        const boardSnap = await getDocs(docRef);
 
-        const boardSnap = await getDoc(docRef);
-
-        if(!boardSnap.exists()) {
-            return null;
+        if(boardSnap.docs.length >= 1) {
+            const data = boardSnap.docs.map(doc => ({
+                ...doc.data(),
+                id : doc.id
+            }));
+            setBoard(data);
+            setBoardExists(true);
         } else {
-            setTest(boardSnap.data());
+            setBoard(null);
         }
     }
 
     useEffect(() => {
-        fetchArticle();
-    }, []);
-
-
-    useEffect(() => {
         const loginNowId = sessionStorage.getItem("memberid");
-        
         if(loginNowId) setLoggedIn(true);
         else setLoggedIn(false);
-    })
+
+        fetchArticle();
+    }, []);
 
     const navigate = useNavigate();
 
@@ -108,17 +109,17 @@ function TestMain() {
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {test !== undefined && 
-                    <TableRow key={test.articleId}>
+                {boardExists && board.map((board) => (
+                    <TableRow key={board.articleId}>
                     <TableCell 
                     // onClick={() => {navigate(`/article/${test.articleId}`);}}
-                    >{test.articleId}</TableCell>
-                    <TableCell>{test.title}</TableCell>
-                    <TableCell>{test.writer}</TableCell>
-                    <TableCell>{test.writeDate}</TableCell>
-                    <TableCell>{test.modifyDate}</TableCell>
+                    >{board.articleId}</TableCell>
+                    <TableCell>{board.title}</TableCell>
+                    <TableCell>{board.writer}</TableCell>
+                    <TableCell>{board.writeDate}</TableCell>
+                    <TableCell>{board.modifyDate}</TableCell>
                     </TableRow>
-                }
+                ))}
                 </TableBody>
             </Table>
         </React.Fragment>
