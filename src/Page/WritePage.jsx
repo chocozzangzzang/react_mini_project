@@ -10,7 +10,7 @@ import { Typography } from '@mui/material';
 
 import { collection, addDoc, getDoc, doc, updateDoc, increment, setDoc } from "firebase/firestore";
 import { db } from '../firebase';
-
+import { MuiFileInput } from "mui-file-input";
 
 const HomePage = styled.div`
     padding : 32px;
@@ -36,6 +36,12 @@ function WritePage() {
     
     const navigate = useNavigate();
 
+    const [value, setValue] = useState(null);
+
+    const handleChange = (newValue, info) => {
+        setValue(newValue);
+    };
+
     async function postArticle() {
         /*
         const data = {
@@ -57,6 +63,8 @@ function WritePage() {
             const docRef = doc(db, "BoardCounter", "BoardCounter");
             const counterSnap = await getDoc(docRef);
 
+            console.log(value);
+
             if(counterSnap.exists()) {
                 const data = counterSnap.data();
                 const articleId = data.counter + 1;
@@ -65,6 +73,7 @@ function WritePage() {
                     articleId : articleId,
                     title : title,
                     content : content,
+                    comments : [],
                     writer : loginNowId,
                     writeDate : formattedDate,
                     modifyDate : formattedDate,
@@ -134,6 +143,13 @@ function WritePage() {
                     variant='outlined' margin="normal"
                     value={content} onChange={(event) => {setContent(event.target.value)}}
                     required={true}/>
+                <MuiFileInput
+                    inputProps={{ accept: '.png, .jpeg' }} 
+                    placeholder="Insert a file"
+                    value={value}
+                    onChange={handleChange}
+                    margin="normal"
+                />
                 {/* <Label>제목</Label>
                 <TextInput type="text" height={20} value={title} onChange={(event) => {setTitle(event.target.value)}}/>
                 <Label>내용</Label>        

@@ -16,7 +16,6 @@ import Typography from '@mui/material/Typography';
 import { db, firebaseStorage } from '../firebase';
 // firestore의 메서드 import
 import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
-
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 
@@ -112,7 +111,7 @@ function TestMain() {
                 {boardExists && board.map((board) => (
                     <TableRow key={board.articleId}>
                     <TableCell 
-                    // onClick={() => {navigate(`/article/${test.articleId}`);}}
+                        onClick={() => {navigate(`/article/${board.articleId}`);}}
                     >{board.articleId}</TableCell>
                     <TableCell>{board.title}</TableCell>
                     <TableCell>{board.writer}</TableCell>

@@ -22,10 +22,10 @@ function DesignedComment(props) {
                                 {comment.comment}
                                 </Typography>
                                 <Typography variant="subtitle1" paragraph>
-                                작성자 : {comment.writerid}
+                                작성자 : {comment.writer}
                                 </Typography>
                                 <Typography variant="subtitle1" color="text.secondary">
-                                작성일자 : {comment.writedate} 수정일자 : {comment.modifydate}
+                                작성일자 : {comment.writeDate} 수정일자 : {comment.modifyDate}
                                 </Typography>
                             </CardContent>
                             </Card>
