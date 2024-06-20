@@ -84,8 +84,7 @@ function LoginPage() {
                         alert("로그인 하였습니다.");
                         sessionStorage.setItem("email", response.data.email);
                         sessionStorage.setItem("memberid", response.data.memberid);
-                        if(prevUrl === "/member/login") navigate("/");
-                        else navigate(prevUrl);
+                        navigate("/");
                     }
                     else alert("비밀번호가 다릅니다.");
                 }

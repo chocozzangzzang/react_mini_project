@@ -73,9 +73,8 @@ export default function SignUp() {
                         alert("로그인 하였습니다.");
                         sessionStorage.setItem("email", response.data.email);
                         sessionStorage.setItem("memberid", response.data.memberid);
-                        console.log(prevUrl);
-                        if(prevUrl === "/member/register" || prevUrl === "/member/login") navigate("/");
-                        else navigate(prevUrl);
+                        // console.log(prevUrl);
+                        navigate("/");
                     }
                     else alert("비밀번호가 다릅니다.");
                 }

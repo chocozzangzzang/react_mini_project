@@ -77,7 +77,7 @@ function TestMain() {
         else setLoggedIn(false);
 
         fetchArticle();
-    }, []);
+    },[]);
 
     const navigate = useNavigate();
 

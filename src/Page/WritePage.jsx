@@ -8,8 +8,9 @@ import axios from 'axios';
 import TextField from '@mui/material/TextField';
 import { Typography } from '@mui/material';
 
-import { collection, addDoc, getDoc, doc, updateDoc, increment, setDoc } from "firebase/firestore";
-import { db } from '../firebase';
+import { getDoc, doc, updateDoc, increment, setDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, firebaseStorage } from '../firebase';
 import { MuiFileInput } from "mui-file-input";
 
 const HomePage = styled.div`
@@ -36,10 +37,10 @@ function WritePage() {
     
     const navigate = useNavigate();
 
-    const [value, setValue] = useState(null);
+    const [fileValue, setFileValue] = useState(null);
 
     const handleChange = (newValue, info) => {
-        setValue(newValue);
+        setFileValue(newValue);
     };
 
     async function postArticle() {
@@ -53,21 +54,28 @@ function WritePage() {
             "Content-Type" : "application/json",
         };*/
         
-        
+       
         try {
             const loginNowId = sessionStorage.getItem("memberid");
+
 
             const today = new Date();
             const formattedDate = `${today.toLocaleString()}`;
 
-            const docRef = doc(db, "BoardCounter", "BoardCounter");
-            const counterSnap = await getDoc(docRef);
+            if(title !== "" && content !== "" && fileValue !== null) {
 
-            console.log(value);
+                const docRef = doc(db, "BoardCounter", "BoardCounter");
+                const counterSnap = await getDoc(docRef);
 
-            if(counterSnap.exists()) {
                 const data = counterSnap.data();
                 const articleId = data.counter + 1;
+                
+
+                const uploadfile = await uploadBytes(
+                    ref(firebaseStorage, `images/${fileValue.name}`, fileValue)
+                )
+                const file_url = await getDownloadURL(uploadfile.ref);
+
                 
                 const boardRef = await setDoc(doc(db, "ReactBoard", articleId.toString()), {
                     articleId : articleId,
@@ -77,16 +85,13 @@ function WritePage() {
                     writer : loginNowId,
                     writeDate : formattedDate,
                     modifyDate : formattedDate,
-                    imageUrl : ""
+                    imageUrl : file_url
                 });
 
                 const counterRef = await updateDoc(doc(db, "BoardCounter", "BoardCounter"), {
                     counter : increment(1),
-                });
-            }
-
-            
-
+                });  
+            } 
             // await axios.post("http://localhost:3001/article", {title, content, loginNowId, formattedDate})
             // .then(response => console.log(response))
             // .catch(error => console.log(error));
@@ -144,11 +149,12 @@ function WritePage() {
                     value={content} onChange={(event) => {setContent(event.target.value)}}
                     required={true}/>
                 <MuiFileInput
-                    inputProps={{ accept: '.png, .jpeg' }} 
+                    inputProps={{ accept: '.png, .jpeg, .gif' }} 
                     placeholder="Insert a file"
-                    value={value}
+                    value={fileValue}
                     onChange={handleChange}
                     margin="normal"
+                    fullWidth
                 />
                 {/* <Label>제목</Label>
                 <TextInput type="text" height={20} value={title} onChange={(event) => {setTitle(event.target.value)}}/>
@@ -160,8 +166,8 @@ function WritePage() {
                 variant="outlined" 
                 size="medium"
                 onClick={(event) => {
-                    if(title === "" || content === "") {
-                        alert("제목이나 내용을 입력하시오!!");
+                    if(title === "" || content === "" || fileValue === null) {
+                        alert("제목이나 내용 및 첨부파일을 확인하시오!!");
                         event.preventDefault();
                     } else {
                         alert("게시물을 작성하였습니다!!");

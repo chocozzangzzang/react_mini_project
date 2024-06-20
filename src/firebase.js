@@ -12,7 +12,7 @@ const firebaseConfig = {
   authDomain: process.env.authDomain,
   databaseURL: process.env.databaseURL,
   projectId: "fir-test-411d9",
-  storageBucket: process.env.storageBucket,
+  storageBucket: "fir-test-411d9.appspot.com",
   messagingSenderId: process.env.messagingSenderId,
   appId: process.env.appId,
   measurementId: process.env.measurementId,
