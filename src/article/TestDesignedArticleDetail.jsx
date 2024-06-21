@@ -105,6 +105,11 @@ function TestDesignedArticleDetail() {
                             <Typography component="h2" variant="h5" paragraph>
                             {board.content}
                             </Typography>
+                            {
+                                board.imageUrl && (
+                                    <img src={board.imageUrl} alt="이미지 파일이 없습니다." width="50%" height="50%"></img>
+                                )
+                            }
                             <Typography variant="subtitle1" color="text.secondary">
                             작성일자 : {board.writeDate} 수정일자 : {board.modifyDate} 
                             </Typography>

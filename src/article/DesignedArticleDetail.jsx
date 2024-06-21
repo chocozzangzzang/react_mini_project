@@ -33,6 +33,7 @@ function DesignedArticleDetail() {
     const [writeDate, setWriteDate] = useState("");
     const [modifyDate, setModifyDate] = useState("");
     const [writer, setWriter] = useState("");
+    const [imgUrl, setImgUrl] = useState("");
 
     const [comments, setComments] = useState([]);
     const [comment, setComment] = useState("");

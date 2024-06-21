@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 // import Button from '../ui/Button';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
@@ -37,11 +37,7 @@ function WritePage() {
     
     const navigate = useNavigate();
 
-    const [fileValue, setFileValue] = useState(null);
-
-    const handleChange = (newValue, info) => {
-        setFileValue(newValue);
-    };
+    const [selectedFile, setSelectedFile] = useState(null);
 
     async function postArticle() {
         /*
@@ -58,24 +54,19 @@ function WritePage() {
         try {
             const loginNowId = sessionStorage.getItem("memberid");
 
-
             const today = new Date();
             const formattedDate = `${today.toLocaleString()}`;
 
-            if(title !== "" && content !== "" && fileValue !== null) {
+            if(title !== "" && content !== "" && selectedFile) {
 
                 const docRef = doc(db, "BoardCounter", "BoardCounter");
                 const counterSnap = await getDoc(docRef);
 
                 const data = counterSnap.data();
                 const articleId = data.counter + 1;
-                
 
-                const uploadfile = await uploadBytes(
-                    ref(firebaseStorage, `images/${fileValue.name}`, fileValue)
-                )
+                const uploadfile = await(uploadBytes(ref(firebaseStorage, `images/${selectedFile.name}`), selectedFile));
                 const file_url = await getDownloadURL(uploadfile.ref);
-
                 
                 const boardRef = await setDoc(doc(db, "ReactBoard", articleId.toString()), {
                     articleId : articleId,
@@ -85,7 +76,7 @@ function WritePage() {
                     writer : loginNowId,
                     writeDate : formattedDate,
                     modifyDate : formattedDate,
-                    imageUrl : file_url
+                    imageUrl : file_url,
                 });
 
                 const counterRef = await updateDoc(doc(db, "BoardCounter", "BoardCounter"), {
@@ -123,6 +114,11 @@ function WritePage() {
         */
     }
 
+    const handleFileChange = (newValue, info) => {
+        setSelectedFile(newValue);
+        console.log(newValue);
+    };
+
     const articleSubmit = (event) => {
         // alert(`${title} :: ${content}`)
         postArticle();
@@ -151,8 +147,8 @@ function WritePage() {
                 <MuiFileInput
                     inputProps={{ accept: '.png, .jpeg, .gif' }} 
                     placeholder="Insert a file"
-                    value={fileValue}
-                    onChange={handleChange}
+                    value={selectedFile}
+                    onChange={handleFileChange}
                     margin="normal"
                     fullWidth
                 />
@@ -166,7 +162,7 @@ function WritePage() {
                 variant="outlined" 
                 size="medium"
                 onClick={(event) => {
-                    if(title === "" || content === "" || fileValue === null) {
+                    if(title === "" || content === "" || selectedFile === null) {
                         alert("제목이나 내용 및 첨부파일을 확인하시오!!");
                         event.preventDefault();
                     } else {
