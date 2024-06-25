@@ -8,10 +8,12 @@ import axios from 'axios';
 import TextField from '@mui/material/TextField';
 import { Typography } from '@mui/material';
 
-import { getDoc, doc, updateDoc, increment, setDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc, increment, setDoc, addDoc, collection, getDocs } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, firebaseStorage } from '../firebase';
 import { MuiFileInput } from "mui-file-input";
+
+import uuid from 'react-uuid'
 
 const HomePage = styled.div`
     padding : 32px;
@@ -59,13 +61,16 @@ function WritePage() {
 
             if(title !== "" && content !== "" && selectedFile) {
 
+
                 const docRef = doc(db, "BoardCounter", "BoardCounter");
                 const counterSnap = await getDoc(docRef);
 
                 const data = counterSnap.data();
                 const articleId = data.counter + 1;
 
-                const uploadfile = await(uploadBytes(ref(firebaseStorage, `images/${selectedFile.name}`), selectedFile));
+                const file_uuid = uuid();
+
+                const uploadfile = await(uploadBytes(ref(firebaseStorage, `images/${file_uuid}`), selectedFile));
                 const file_url = await getDownloadURL(uploadfile.ref);
                 
                 const boardRef = await setDoc(doc(db, "ReactBoard", articleId.toString()), {
@@ -77,6 +82,8 @@ function WritePage() {
                     writeDate : formattedDate,
                     modifyDate : formattedDate,
                     imageUrl : file_url,
+                    fileName : file_uuid,
+                    realfileName : selectedFile.name,
                 });
 
                 const counterRef = await updateDoc(doc(db, "BoardCounter", "BoardCounter"), {

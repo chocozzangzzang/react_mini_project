@@ -8,6 +8,8 @@ import TextField from '@mui/material/TextField';
 import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 
+import { MuiFileInput } from 'mui-file-input';
+
 import { doc, getDoc, getDocs, collection, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 
@@ -34,6 +36,8 @@ function TestModifyPage() {
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const {articleId} = useParams();
     const location = useLocation();
@@ -66,6 +70,11 @@ function TestModifyPage() {
         setContent(boardSnap.data().content);
     }
 
+    const handleFileChange = (newValue, info) => {
+        setSelectedFile(newValue);
+        console.log(newValue);
+    };
+
     useEffect(() => {
         getArticle();
     }, []);
@@ -92,6 +101,19 @@ function TestModifyPage() {
                 <TextInput type="text" height={20} value={title} onChange={(event) => {setTitle(event.target.value)}}/>
                 <Label>내용</Label>        
                 <TextInput type="text" height={240} value={content} onChange={(event) => {setContent(event.target.value)}}></TextInput> */}
+                {
+                    board.imageUrl && (
+                        <img src={board.imageUrl} alt="이미지 파일이 없습니다." width="50%" height="50%"></img>
+                    )
+                }
+                <MuiFileInput
+                    inputProps={{ accept: '.png, .jpeg, .gif' }} 
+                    placeholder={board.realfileName}
+                    value={selectedFile}
+                    onChange={handleFileChange}
+                    margin="normal"
+                    fullWidth
+                />
             </AllContainer>
             <Button
                 type="submit"

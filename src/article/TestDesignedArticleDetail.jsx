@@ -16,7 +16,7 @@ import Button from '@mui/material/Button';
 import { db, firebaseStorage } from '../firebase';
 // firestore의 메서드 import
 import { doc, getDoc, getDocs, collection, updateDoc, deleteDoc } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const TotalDiv = styled.div`
     display : flex;
@@ -126,10 +126,23 @@ function TestDesignedArticleDetail() {
                                     글 수정
                                 </Button>
                                 <Button
-                                    onClick={() => {                
-                                        const docRef = doc(db, "ReactBoard", articleId.toString());
-                                        deleteDoc(docRef);
-                                        navigate("/");
+                                    onClick={() => {              
+                                        if(window.confirm("삭제하시겠습니까?")) {
+                                            const docRef = doc(db, "ReactBoard", articleId.toString());
+                                            if(board.fileName !== "") {
+                                                const imageRef = ref(firebaseStorage, `images/${board.fileName}`);
+                                                deleteObject(imageRef).then(() => {
+                                                    deleteDoc(docRef);
+                                                    alert("삭제되었습니다!!");
+                                                    navigate("/");
+                                                }).catch((error) => {
+                                                    console.log(error);
+                                                })
+                                            }
+                                        }  
+                                        //console.log(board.fileName);
+                                        //deleteDoc(docRef);
+                                        //navigate("/");
                                     }}
                                 >
                                     글 삭제
