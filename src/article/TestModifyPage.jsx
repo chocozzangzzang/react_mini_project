@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 // import Button from '../ui/Button';
@@ -10,8 +10,11 @@ import Button from '@mui/material/Button';
 
 import { MuiFileInput } from 'mui-file-input';
 
-import { doc, getDoc, getDocs, collection, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from "../firebase";
+import { doc, getDoc, getDocs, collection, updateDoc } from 'firebase/firestore';
+import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { db, firebaseStorage } from "../firebase";
+
+import uuid from 'react-uuid';
 
 const HomePage = styled.div`
         padding : 32px;
@@ -40,7 +43,6 @@ function TestModifyPage() {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const {articleId} = useParams();
-    const location = useLocation();
 
     const articleSubmit = (event) => {
         putArticle();
@@ -50,15 +52,43 @@ function TestModifyPage() {
 
     const navigate = useNavigate();
 
+    async function updateArticle(modifydate) {
+
+        const file_uuid = uuid();
+        const uploadfile = await(uploadBytes(ref(firebaseStorage, `images/${file_uuid}`), selectedFile));
+        const file_url = await getDownloadURL(uploadfile.ref);
+        
+        const boardSnap = await updateDoc(doc(db, "ReactBoard", articleId.toString()), {
+            modifydate : modifydate,
+            imageUrl : file_url,
+            fileName : file_uuid,
+            realfileName : selectedFile.name,
+        });
+    }
+
     async function putArticle() {
         const today = new Date();
         const modifydate = `${today.toLocaleString()}`;
         
-        const boardSnap = await updateDoc(doc(db, "ReactBoard", articleId.toString()), {
-            title : title,
-            content : content,
-            modifyDate : modifydate,
-        });
+        const comparefile = (selectedFile.name === board.realfileName);
+        
+        // console.log(comparefile);
+        
+        if(!comparefile) {
+            
+            const imageRef = ref(firebaseStorage, `images/${board.fileName}`);
+            
+            deleteObject(imageRef).then(() => {
+                updateArticle(modifydate);
+            })
+            
+        }
+
+        // const boardSnap = await updateDoc(doc(db, "ReactBoard", articleId.toString()), {
+        //     title : title,
+        //     content : content,
+        //     modifyDate : modifydate,
+        // });
     };
 
     async function getArticle() {
@@ -72,7 +102,6 @@ function TestModifyPage() {
 
     const handleFileChange = (newValue, info) => {
         setSelectedFile(newValue);
-        console.log(newValue);
     };
 
     useEffect(() => {

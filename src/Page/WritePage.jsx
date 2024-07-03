@@ -51,6 +51,13 @@ function WritePage() {
         const config = {
             "Content-Type" : "application/json",
         };*/
+
+        const aa = collection(db, "ReactBoard");
+        console.log(aa);
+
+        // const docRef = await addDoc(collection(db, "ReactBoard"), {
+        //     tempVal : "temp",
+        // });
         
        
         try {
@@ -60,7 +67,6 @@ function WritePage() {
             const formattedDate = `${today.toLocaleString()}`;
 
             if(title !== "" && content !== "" && selectedFile) {
-
 
                 const docRef = doc(db, "BoardCounter", "BoardCounter");
                 const counterSnap = await getDoc(docRef);
@@ -123,7 +129,7 @@ function WritePage() {
 
     const handleFileChange = (newValue, info) => {
         setSelectedFile(newValue);
-        console.log(newValue);
+        // console.log(newValue);
     };
 
     const articleSubmit = (event) => {

@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import styled from 'styled-components';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import DesignedComment from '../comment/DesignedComment';
 import TextField from "@mui/material/TextField";
@@ -42,7 +42,7 @@ function TestDesignedArticleDetail() {
     const [nowWriter, setNowWriter] = useState(false);
 
     const navigate = useNavigate();
-
+    
     async function getArticle() {
         const docRef = doc(db, "ReactBoard", articleId.toString());
         const boardSnap = await getDoc(docRef);
