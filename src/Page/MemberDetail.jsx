@@ -18,6 +18,8 @@ import dayjs from "dayjs";
 import InputLabel from '@mui/material/InputLabel';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -34,6 +36,11 @@ export default function MemberDetail() {
     const navigate = useNavigate();
     const [memberData, setMemberData] = useState({});
 
+    const [id, setId] = useState("");
+    const [email, setEmail] = useState("");
+    const [birth, setBirth] = useState("");
+    const [gender, setGender] = useState("");
+
     useEffect(() => {
         getMember();
     }, []); 
@@ -41,7 +48,26 @@ export default function MemberDetail() {
     async function getMember() {
 
         const email = sessionStorage.getItem("email");
+        const docRef = doc(db, "ReactMember", email);
+        const docSnap = await getDoc(docRef);
 
+        try {
+          if(docSnap.exists()) {
+            const data = docSnap.data();
+            setId(data.id);
+            setEmail(data.email);
+            setBirth(data.birth);
+            setGender(data.gender);
+          } else {
+            alert("회원정보를 불러올 수 없습니다!!");
+            navigate("/");
+          }
+
+        } catch(e) {
+          console.log(e.message);
+        }
+
+        /*
         try {
             await axios.post("http://localhost:3001/member/getDetail", {email})
                     .then(response => {
@@ -50,7 +76,7 @@ export default function MemberDetail() {
                     .catch(error => {console.log(error);})
         } catch(e) {
             console.log(e.message);
-        }
+        }*/
 
     }
 
@@ -78,7 +104,7 @@ export default function MemberDetail() {
                 <InputLabel id="demo-simple-select-required-label">EMAIL</InputLabel>
                 <TextField
                     id="outlined-read-only-input"
-                    value={memberData.email}
+                    value={email}
                     InputProps={{
                         readOnly: true,
                     }}
@@ -89,7 +115,7 @@ export default function MemberDetail() {
                 <InputLabel id="demo-simple-select-required-label">ID</InputLabel>
                 <TextField
                     id="outlined-read-only-input"
-                    value={memberData.memberid}
+                    value={id}
                     InputProps={{
                         readOnly: true,
                     }}
@@ -100,7 +126,7 @@ export default function MemberDetail() {
                 <InputLabel id="demo-simple-select-required-label">BIRTH</InputLabel>
                 <TextField
                     id="outlined-read-only-input"
-                    value={memberData.birth}
+                    value={birth}
                     InputProps={{
                         readOnly: true,
                     }}
@@ -111,7 +137,7 @@ export default function MemberDetail() {
                 <InputLabel id="demo-simple-select-required-label">GENDER</InputLabel>
                 <TextField
                     id="outlined-read-only-input"
-                    value={memberData.gender}
+                    value={gender}
                     InputProps={{
                         readOnly: true,
                     }}

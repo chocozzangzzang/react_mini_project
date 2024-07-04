@@ -22,6 +22,9 @@ import InputLabel from '@mui/material/InputLabel';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
+import { db } from '../firebase';
+import { doc, collection, setDoc } from 'firebase/firestore';
+
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 const secretKey = "cocozzang";
@@ -89,13 +92,29 @@ export default function SignUp() {
 
         // console.log(settingPW);
 
+        const aa = collection(db, "ReactMember");
+        // console.log(aa);
+
+        try {
+          const registerRef = await setDoc(doc(db, "ReactMember", email), {
+            id : id,
+            pw : settingPW,
+            email : email,
+            birth : birth,
+            gender : gender
+          });
+        } catch (e) {
+          console.log(e.message);
+        }
+        
+        /*
         try {
             await axios.post("http://localhost:3001/member/register", {id, settingPW, email, birth, gender})
             .then(response => {console.log(response); alert("회원가입 되었습니다");})
             .catch(error => console.log(error));
         } catch(e) {
             console.log(e.message);
-        }
+        }*/
     }
 
     function clearAll() {
@@ -113,7 +132,7 @@ export default function SignUp() {
 
     const memberRegister = (event) => {
       
-      console.log(dayjs(birth));
+      // console.log(dayjs(birth));
 
       if(isEmailValid && isPwValid && isPwSame && id !== "" && gender !== "" && birthIsSelected) {
           register();

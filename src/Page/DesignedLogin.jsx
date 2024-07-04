@@ -13,6 +13,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
+import { collection, doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -58,7 +60,34 @@ export default function SignUp() {
     async function login() {
 
         const prevUrl = location.state;
+        
+        // const aa = collection(db, "ReactMember");
 
+        const docRef = doc(db, "ReactMember", email);
+        const docSnap = await getDoc(docRef);
+
+        try {
+            if(docSnap.exists()) {
+                const data = docSnap.data();
+                const decryptPW = CryptoJS.AES.decrypt(data.pw, secretKey);
+                const settingPW = JSON.parse(decryptPW.toString(CryptoJS.enc.Utf8)).pw;
+                if(settingPW === pw) {
+                    clearAll();
+                    alert("로그인 하였습니다.");
+                    sessionStorage.setItem("email", data.email);
+                    sessionStorage.setItem("memberid", data.id);
+                    navigate("/");
+                } else {
+                    alert("비밀번호가 다릅니다!!");
+                }
+            } else {
+                alert("존재하지 않는 회원입니다!!");
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+        
+        /*
         try {
             await axios.post("http://localhost:3001/member/login", {email})
             .then(response => {
@@ -82,7 +111,7 @@ export default function SignUp() {
             .catch(error => console.log(error));
         } catch(e) {
             console.log(e.message);
-        }
+        }*/
     }
 
     function clearAll() {

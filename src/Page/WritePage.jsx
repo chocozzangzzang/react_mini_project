@@ -53,7 +53,7 @@ function WritePage() {
         };*/
 
         const aa = collection(db, "ReactBoard");
-        console.log(aa);
+        //console.log(aa);
 
         // const docRef = await addDoc(collection(db, "ReactBoard"), {
         //     tempVal : "temp",

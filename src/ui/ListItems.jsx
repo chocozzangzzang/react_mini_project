@@ -22,6 +22,10 @@ function ListItems() {
     navigate("/forecast");
   }
 
+  const goMyPage = () => {
+    navigate("/member/detail");
+  }
+
   return (
     <React.Fragment>
     <ListItemButton onClick={goMain}>
@@ -36,7 +40,7 @@ function ListItems() {
       </ListItemIcon>
       <ListItemText primary="DashBoard" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton onClick={goMyPage}>
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
