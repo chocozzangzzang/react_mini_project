@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -24,6 +24,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 import { db } from '../firebase';
 import { doc, collection, setDoc } from 'firebase/firestore';
+import { MuiFileInput } from 'mui-file-input';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -60,12 +61,20 @@ export default function SignUp() {
     const [gender, setGender] = useState("");
     const [birthIsSelected, setBirthIsSelected] = useState(false);
 
+    const [profileImage, setProfileImage] = useState(null);
+
+    const fileInput = useRef(null);
+
     const PWD_REGEX = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*]).{1,10}$/;
     const EMAIL_REGEX = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 
     const navigate = useNavigate();
     
     const dateMax = dayjs().add(-1, 'day');
+
+    const onProfileChange = (newValue) => {
+      console.log(newValue.target.files[0]);
+    }
 
     useEffect(() => {
         if(pw === pwConfirm && pw !== "" && isPwValid) setIsPwSame(true);
@@ -167,12 +176,27 @@ export default function SignUp() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <br></br>
+          <Typography component="h2" variant="h5">
+            Profile
+          </Typography>
+          <Avatar
+            sx={{width:128, height:128}}
+          >
+          </Avatar>
+          <input 
+              type='file' 
+              // style={{display:'none'}}
+              inputProps={{ accept: '.png, .jpeg, .gif' }} 
+              name='profile_img'
+              onChange={onProfileChange}
+              value={profileImage}/>
           <Box component="form" noValidate onSubmit={memberRegister} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
