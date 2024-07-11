@@ -31,6 +31,7 @@ const datePickerUtils = {
 
 const defaultTheme = createTheme();
 
+
 export default function MemberDetail() {
 
     const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function MemberDetail() {
     const [email, setEmail] = useState("");
     const [birth, setBirth] = useState("");
     const [gender, setGender] = useState("");
+    const [imgUrl, setImgUrl] = useState("");
 
     useEffect(() => {
         getMember();
@@ -58,6 +60,7 @@ export default function MemberDetail() {
             setEmail(data.email);
             setBirth(data.birth);
             setGender(data.gender);
+            setImgUrl(data.imageUrl);
           } else {
             alert("회원정보를 불러올 수 없습니다!!");
             navigate("/");
@@ -100,6 +103,14 @@ export default function MemberDetail() {
           </Typography>
           <Box component="form" noValidate sx={{ mt: 3 }}>
             <Grid container spacing={2}>
+              <Grid item xs={12}>
+              <InputLabel id="demo-simple-select-required-label">PROFILE</InputLabel>
+              <Avatar
+                  src={imgUrl}
+                  sx={{m:1, width:128, height:128}}
+                  alt="NO PROFILE"
+              />
+              </Grid>
               <Grid item xs={12}>
                 <InputLabel id="demo-simple-select-required-label">EMAIL</InputLabel>
                 <TextField

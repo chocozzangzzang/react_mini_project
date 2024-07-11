@@ -22,9 +22,11 @@ import InputLabel from '@mui/material/InputLabel';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
-import { db } from '../firebase';
+import { db, firebaseStorage } from '../firebase';
 import { doc, collection, setDoc } from 'firebase/firestore';
 import { MuiFileInput } from 'mui-file-input';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import uuid from 'react-uuid';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -62,8 +64,8 @@ export default function SignUp() {
     const [birthIsSelected, setBirthIsSelected] = useState(false);
 
     const [profileImage, setProfileImage] = useState(null);
-
-    const fileInput = useRef(null);
+    const [image, setImage] = useState("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
+    const imgRef = useRef(null);
 
     const PWD_REGEX = /^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*]).{1,10}$/;
     const EMAIL_REGEX = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
@@ -72,8 +74,20 @@ export default function SignUp() {
     
     const dateMax = dayjs().add(-1, 'day');
 
-    const onProfileChange = (newValue) => {
-      console.log(newValue.target.files[0]);
+    const onProfileChange = () => {
+      // console.log(newValue.target.files[0]);
+
+      if (imgRef.current && imgRef.current.files) {
+        const img = imgRef.current.files[0];
+        setProfileImage(img);
+        // console.log(img);
+
+        const reader = new FileReader();
+        reader.readAsDataURL(img);
+        reader.onload = () => {
+          setImage(reader.result.toString());
+        }
+      }
     }
 
     useEffect(() => {
@@ -99,9 +113,12 @@ export default function SignUp() {
         const cryptoPW = CryptoJS.AES.encrypt(JSON.stringify(data), secretKey);
         const settingPW = cryptoPW.toString();
 
+        const file_uuid = uuid();
         // console.log(settingPW);
 
         const aa = collection(db, "ReactMember");
+        const profileImageUpload = await(uploadBytes(ref(firebaseStorage, `profile_images/${file_uuid}`), profileImage));
+        const profile_url = await getDownloadURL(profileImageUpload.ref);
         // console.log(aa);
 
         try {
@@ -110,7 +127,9 @@ export default function SignUp() {
             pw : settingPW,
             email : email,
             birth : birth,
-            gender : gender
+            gender : gender,
+            imageUrl : profile_url,
+            fileName : file_uuid,
           });
         } catch (e) {
           console.log(e.message);
@@ -143,7 +162,7 @@ export default function SignUp() {
       
       // console.log(dayjs(birth));
 
-      if(isEmailValid && isPwValid && isPwSame && id !== "" && gender !== "" && birthIsSelected) {
+      if(isEmailValid && isPwValid && isPwSame && id !== "" && gender !== "" && birthIsSelected && profileImage !== null) {
           register();
           clearAll();
           navigate("/");
@@ -187,6 +206,7 @@ export default function SignUp() {
             Profile
           </Typography>
           <Avatar
+            src={image}
             sx={{width:128, height:128}}
           >
           </Avatar>
@@ -196,7 +216,8 @@ export default function SignUp() {
               inputProps={{ accept: '.png, .jpeg, .gif' }} 
               name='profile_img'
               onChange={onProfileChange}
-              value={profileImage}/>
+              // value={profileImage}
+              ref={imgRef}/>
           <Box component="form" noValidate onSubmit={memberRegister} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
