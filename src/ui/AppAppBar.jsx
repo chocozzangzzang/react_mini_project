@@ -33,8 +33,9 @@ const darkTheme = createTheme({
 
 export default function AppAppBar() {
 
-    const [nowLoggedIn, setNowLoggedIn] = useState(false);
+    // const [nowLoggedIn, setNowLoggedIn] = useState(false);
     const [nowId, setNowId] = useState("");
+    // var nowLoggedIn = false;
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -47,14 +48,13 @@ export default function AppAppBar() {
     useEffect(() => {
       const loginNowId = sessionStorage.getItem("memberid");
       if(loginNowId !== null) {
-          setNowLoggedIn(true);
           setNowId(loginNowId);
       } 
     });
 
     const logout = () => {
         sessionStorage.clear();
-        setNowLoggedIn(false);
+        navigate("/");
     }
 
     return (
@@ -77,7 +77,7 @@ export default function AppAppBar() {
                 </IconButton>
                     <Button href="/" size="large" color="secondary">REACT MINI PROJECT</Button>
                     {
-                        nowLoggedIn ? (
+                        sessionStorage.getItem("login") ? (
                             <ButtonDiv>
                                 <NowSpan>{nowId} 님 환영합니다!!  </NowSpan>
                                 <Button variant="contained" size="medium" onClick={() => logout()}>로그아웃</Button>

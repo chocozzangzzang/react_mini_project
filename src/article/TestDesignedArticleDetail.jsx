@@ -39,7 +39,9 @@ function TestDesignedArticleDetail() {
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
 
+
     const [nowWriter, setNowWriter] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const navigate = useNavigate();
     
@@ -51,9 +53,14 @@ function TestDesignedArticleDetail() {
         setComments(boardSnap.data().comments);
         
         const nowId = sessionStorage.getItem("memberid");
+        const nowRole = sessionStorage.getItem("role");
 
         if(nowId === boardSnap.data().writer) {
             setNowWriter(true);
+        }
+
+        if(nowRole === "ADMIN") {
+            setIsAdmin(true);
         }
     }
 
@@ -116,7 +123,7 @@ function TestDesignedArticleDetail() {
                         </CardContent>
                     </Card>
                     {
-                        nowWriter && (
+                        (nowWriter || isAdmin) && (
                             <ButtonDiv>
                                 <Button
                                     onClick={() => {

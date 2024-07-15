@@ -18,8 +18,9 @@ import dayjs from "dayjs";
 import InputLabel from '@mui/material/InputLabel';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { deleteDoc, doc, getDoc } from 'firebase/firestore';
+import { db, firebaseStorage } from '../firebase';
+import { deleteObject, ref } from 'firebase/storage';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -42,6 +43,7 @@ export default function MemberDetail() {
     const [birth, setBirth] = useState("");
     const [gender, setGender] = useState("");
     const [imgUrl, setImgUrl] = useState("");
+    const [fileName, setFileName] = useState("");
 
     useEffect(() => {
         getMember();
@@ -61,6 +63,7 @@ export default function MemberDetail() {
             setBirth(data.birth);
             setGender(data.gender);
             setImgUrl(data.imageUrl);
+            setFileName(data.fileName);
           } else {
             alert("회원정보를 불러올 수 없습니다!!");
             navigate("/");
@@ -165,6 +168,27 @@ export default function MemberDetail() {
                     sx={{ mt: 3, mb: 2 }}
                 >
                 돌아가기
+                </Button>
+                <Button
+                    onClick={() => {
+                        var input = window.confirm("정말 탈퇴하시겠습니까?");
+                        const memberRef = doc(db, "ReactMember", email);
+                        if(input){
+                          const profileImgRef = ref(firebaseStorage, `profile_images/${fileName}`);
+                          deleteObject(profileImgRef).then(() => {
+                            deleteDoc(memberRef);
+                            sessionStorage.clear();
+                            alert("회원탈퇴되었습니다!!");
+                            navigate("/");
+                          })
+                        }
+                    }}
+                    fullWidth
+                    color="warning"
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                >
+                회원탈퇴
                 </Button>
               </Grid>
             </Grid>

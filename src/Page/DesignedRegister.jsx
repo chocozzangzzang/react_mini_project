@@ -130,6 +130,7 @@ export default function SignUp() {
             gender : gender,
             imageUrl : profile_url,
             fileName : file_uuid,
+            role : "MEMBER",
           });
         } catch (e) {
           console.log(e.message);

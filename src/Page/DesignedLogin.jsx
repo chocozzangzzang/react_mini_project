@@ -76,6 +76,8 @@ export default function SignUp() {
                     alert("로그인 하였습니다.");
                     sessionStorage.setItem("email", data.email);
                     sessionStorage.setItem("memberid", data.id);
+                    sessionStorage.setItem("login", true);
+                    sessionStorage.setItem("role", data.role);
                     navigate("/");
                 } else {
                     alert("비밀번호가 다릅니다!!");
