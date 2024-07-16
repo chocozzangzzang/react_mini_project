@@ -16,6 +16,7 @@ import styled from 'styled-components';
 import dayjs from "dayjs";
 
 import InputLabel from '@mui/material/InputLabel';
+import Modal from "../ui/Modal.jsx";
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { deleteDoc, doc, getDoc } from 'firebase/firestore';
@@ -44,6 +45,54 @@ export default function MemberDetail() {
     const [gender, setGender] = useState("");
     const [imgUrl, setImgUrl] = useState("");
     const [fileName, setFileName] = useState("");
+    const [nowPw, setNowPw] = useState("");
+
+    const [modalOpen, setModalOpen] = useState(false);
+    
+    const openModal = () => {
+      setModalOpen(true);
+    }
+
+    const closeModal = (result) => {
+      if(result) {
+        console.log(result);
+        // const memberRef = doc(db, "ReactMember", email);
+        // console.log(memberRef);
+        
+        const memberRef = doc(db, "ReactMember", email);
+        var input = window.confirm("정말 탈퇴하시겠습니까?");
+        if(input) {
+          setModalOpen(false);
+          const profileImgRef = ref(firebaseStorage, `profile_images/${fileName}`);
+          deleteObject(profileImgRef).then(() => {
+            deleteDoc(memberRef);
+            sessionStorage.clear();
+            alert("탈퇴되었습니다!");
+            navigate("/");
+          })
+        } else {
+          setModalOpen(false);
+        }
+        /*
+        if(input){
+          const profileImgRef = ref(firebaseStorage, `profile_images/${fileName}`);
+          deleteObject(profileImgRef).then(() => {
+            deleteDoc(memberRef);
+            sessionStorage.clear();
+            alert("회원탈퇴되었습니다!!");
+            // closeOnlyModal();
+            navigate("/");
+          })
+        }*/
+      } else {
+        alert("비밀번호가 일치하지 않습니다.");
+        closeOnlyModal();
+      }
+    }
+
+    const closeOnlyModal = () => {
+      setModalOpen(false);
+    }
 
     useEffect(() => {
         getMember();
@@ -64,6 +113,7 @@ export default function MemberDetail() {
             setGender(data.gender);
             setImgUrl(data.imageUrl);
             setFileName(data.fileName);
+            setNowPw(data.pw);
           } else {
             alert("회원정보를 불러올 수 없습니다!!");
             navigate("/");
@@ -170,7 +220,9 @@ export default function MemberDetail() {
                 돌아가기
                 </Button>
                 <Button
-                    onClick={() => {
+                    onClick={openModal}
+                    /*onClick={() => {
+                        openModal
                         var input = window.confirm("정말 탈퇴하시겠습니까?");
                         const memberRef = doc(db, "ReactMember", email);
                         if(input){
@@ -182,7 +234,7 @@ export default function MemberDetail() {
                             navigate("/");
                           })
                         }
-                    }}
+                    }}*/
                     fullWidth
                     color="warning"
                     variant="contained"
@@ -190,6 +242,9 @@ export default function MemberDetail() {
                 >
                 회원탈퇴
                 </Button>
+                <Modal open={modalOpen} close={closeModal} header="회원 탈퇴" nowPw={nowPw} com={closeOnlyModal}>
+                    비밀번호를 입력해주세요.
+                </Modal>
               </Grid>
             </Grid>
           </Box>
