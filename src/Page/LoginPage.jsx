@@ -111,11 +111,8 @@ function LoginPage() {
             if (email === "" || pw === "") alert("입력하지 않은 칸이 있는지 확인하십시오.");
             else if(!isEmailValid || !isPwValid) alert("입력 정보를 다시 확인하십시오.");
             event.preventDefault();
-        }
-
-        
+        }   
     }
-
     return (
         <RegiPage>
             <form onSubmit={memberLogin}>

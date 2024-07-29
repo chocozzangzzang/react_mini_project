@@ -15,6 +15,8 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { collection, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -137,6 +139,32 @@ export default function SignUp() {
         
     }
 
+    const handleGoogleSignUp = () => {
+        const provider = new GoogleAuthProvider();
+        const auth = getAuth();
+        console.log(auth, provider);
+    
+        signInWithPopup(auth, provider) //signInWithPopup을 사용하면 팝업창으로 인증
+          .then((result) => {
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            const user = result.user;
+            
+            sessionStorage.setItem("email", user.email);
+            sessionStorage.setItem("memberid", user.displayName);
+            sessionStorage.setItem("login", true);
+            sessionStorage.setItem("role", "GOOGLE_MEMBER");
+
+            navigate("/");
+          }).catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            const email = error.customData.email;
+            const credential = GoogleAuthProvider.credentialFromError(error);
+          });
+      }
+
+
     return (
         <ThemeProvider theme={defaultTheme}>
         <Container component="main" maxWidth="xs">
@@ -190,6 +218,13 @@ export default function SignUp() {
                 sx={{ mt: 3, mb: 2 }}
                 >
                 로그인
+                </Button>
+                <Button
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt : 3, mb : 2 }} 
+                    onClick={() => {handleGoogleSignUp()}}>
+                구글 로그인
                 </Button>
             </Box>
             </Box>
