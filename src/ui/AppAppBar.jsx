@@ -36,6 +36,7 @@ export default function AppAppBar() {
     // const [nowLoggedIn, setNowLoggedIn] = useState(false);
     const [nowId, setNowId] = useState("");
     // var nowLoggedIn = false;
+    const [isGoogle, setIsGoogle] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -47,14 +48,27 @@ export default function AppAppBar() {
 
     useEffect(() => {
       const loginNowId = sessionStorage.getItem("memberid");
+      const memberCategory = sessionStorage.getItem("role");
       if(loginNowId !== null) {
           setNowId(loginNowId);
-      } 
+      }
+
+      if(memberCategory === "GOOGLE_MEMBER") {
+        setIsGoogle(true);
+      }
     });
 
     const logout = () => {
         sessionStorage.clear();
         navigate("/");
+    }
+
+    const memberDetail = () => {
+        if(!isGoogle) {
+            navigate("/member/detail");
+        } else {
+            navigate("/member/googleDetail");
+        }
     }
 
     return (
@@ -81,7 +95,7 @@ export default function AppAppBar() {
                             <ButtonDiv>
                                 <NowSpan>{nowId} 님 환영합니다!!  </NowSpan>
                                 <Button variant="contained" size="medium" onClick={() => logout()}>로그아웃</Button>
-                                <Button variant="contained" size="medium" onClick={() => navigate("/member/detail")}>회원정보</Button>
+                                <Button variant="contained" size="medium" onClick={() => memberDetail()}>회원정보</Button>
                             </ButtonDiv>
                         ) : (
                             <ButtonDiv>

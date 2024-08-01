@@ -12,6 +12,15 @@ import LaptopIcon from '@mui/icons-material/Laptop';
 
 function ListItems() {
 
+  const [google, setGoogle] = React.useState(false);
+
+  React.useEffect(() => {
+    const googleOrNot = sessionStorage.getItem("role");
+    if(googleOrNot === "GOOGLE_MEMBER") {
+      setGoogle(true);
+    }
+  })
+
   const navigate = useNavigate();
 
   const goMain = () => {
@@ -23,7 +32,11 @@ function ListItems() {
   }
 
   const goMyPage = () => {
-    navigate("/member/detail");
+    if(google) {
+      navigate("/member/googleDetail");
+    } else {
+      navigate("/member/detail");
+    }    
   }
 
   return (

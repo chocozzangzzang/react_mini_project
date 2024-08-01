@@ -55,10 +55,7 @@ export default function MemberDetail() {
 
     const closeModal = (result) => {
       if(result) {
-        console.log(result);
-        // const memberRef = doc(db, "ReactMember", email);
-        // console.log(memberRef);
-        
+       
         const memberRef = doc(db, "ReactMember", email);
         var input = window.confirm("정말 탈퇴하시겠습니까?");
         if(input) {

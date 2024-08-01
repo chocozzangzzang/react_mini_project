@@ -18,6 +18,7 @@ import MemberDetail from './Page/MemberDetail';
 import TestMain from './Page/TestMain';
 import TestDesignedArticleDetail from './article/TestDesignedArticleDetail';
 import TestModifyPage from './article/TestModifyPage';
+import GoogleMemberDetail from './Page/GoogleMemberDetail';
 
 // const MainTitleText = styled.p`
 //   font-size : 24px;
@@ -48,6 +49,7 @@ function App() {
           {/* <Route path="/member/register" element={<RegisterPage />}></Route> */}
           <Route path="/member/register" element={<SignUp />}></Route>
           <Route path="/member/detail" element={<MemberDetail />}></Route>
+          <Route path="/member/googleDetail" element={<GoogleMemberDetail />}></Route>
           {/* <Route path="/member/login" element={<LoginPage />}></Route> */}
           <Route path="/member/login" element={<Login />}></Route>
           <Route path="/forecast" element={<Forecast />}></Route>
