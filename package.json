@@ -21,6 +21,7 @@
     "dayjs": "^1.11.11",
     "express": "^4.19.2",
     "firebase": "^10.12.2",
+    "firebase-messaging": "^1.0.6",
     "mui-file-input": "^4.0.4",
     "mysql": "^2.18.1",
     "papaparse": "^5.4.1",

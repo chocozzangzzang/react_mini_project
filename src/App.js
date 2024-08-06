@@ -19,6 +19,7 @@ import TestMain from './Page/TestMain';
 import TestDesignedArticleDetail from './article/TestDesignedArticleDetail';
 import TestModifyPage from './article/TestModifyPage';
 import GoogleMemberDetail from './Page/GoogleMemberDetail';
+import { useEffect } from 'react';
 
 // const MainTitleText = styled.p`
 //   font-size : 24px;
@@ -27,6 +28,18 @@ import GoogleMemberDetail from './Page/GoogleMemberDetail';
 // `;
 
 function App() {
+  useEffect(() => {
+    // 푸시 알림 권한 요청
+    Notification.requestPermission()
+      .then((permission) => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.');
+        } else {
+          console.log('Unable to get permission to notify.');
+        }
+      });
+
+  }, []);
 
   return (
     <BrowserRouter>
