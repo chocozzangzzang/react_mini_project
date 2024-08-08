@@ -5,6 +5,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import styled from 'styled-components';
 import { Button } from '@mui/material';
+import { useState } from 'react';
 
 const ButtonDiv = styled.div`
     display : flex;
@@ -13,8 +14,16 @@ const ButtonDiv = styled.div`
 
 function DesignedComment(props) {
 
-    const {comments} = props;
+    const {comments, commentChange} = props;
+    const [allComment, setAllComment] = useState([]);
 
+    useEffect(() => {
+        setAllComment(comments)
+    }, []);
+
+    const handleChange = (comments) => {
+        commentChange(comments);
+    }
 
     const nowId = sessionStorage.getItem("memberid");
 
@@ -24,7 +33,7 @@ function DesignedComment(props) {
                 comments.length == 0 ? (
                     <Typography variant="h5">작성된 댓글이 없습니다.</Typography>
                 ) : (
-                        comments.map((comment) => (
+                        comments.map((comment, index) => (
                             <Grid item xs={12} md={6}>
                             <Card sx={{ display: 'flex', padding: 2 }}>
                             <CardContent sx={{ flex: 1 }}>
@@ -44,7 +53,12 @@ function DesignedComment(props) {
                                     <ButtonDiv>
                                         <Button
                                         type="submit"
-                                        onClick={(event) => {alert("삭제는 추가예정")}}>
+                                        onClick={(event) => {
+                                            const newComment = JSON.parse(JSON.stringify(allComment))
+                                            newComment.splice(index, 1);
+                                            // console.log(newComment);
+                                            handleChange(newComment);
+                                        }}>
                                         댓글 삭제
                                         </Button>
                                     </ButtonDiv>

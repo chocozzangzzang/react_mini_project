@@ -39,7 +39,6 @@ function TestDesignedArticleDetail() {
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
 
-
     const [nowWriter, setNowWriter] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -88,6 +87,14 @@ function TestDesignedArticleDetail() {
     const commentSubmit = (event) => {
         postComment();
         event.preventDefault();
+    }
+
+    const handleComments = async (changedComment) => {
+        setComments(changedComment);
+
+        const boardSnap = await updateDoc(doc(db, "ReactBoard", articleId.toString()), {
+            comments : changedComment
+        });
     }
 
     useEffect(() => {
@@ -165,7 +172,7 @@ function TestDesignedArticleDetail() {
                 </Typography>
                 {   
                     (comments.length > 0) && 
-                    <DesignedComment comments={comments}/>
+                    <DesignedComment comments={comments} commentChange ={handleComments} />
                 }
             </TotalDiv>
             <TotalDiv>
